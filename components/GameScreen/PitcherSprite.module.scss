@@ -1,0 +1,30 @@
+// sprite sheet: 8 frames horizontal. Source: 5856×704. Each frame: 732×704.
+// CSS scaled: 110×106 per frame, sheet appears 880×106.
+
+$frame-w: 110px;
+$frame-h: 106px;
+$sheet-w: 880px;
+$sheet-h: 106px;
+
+.sprite {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: $frame-w;
+  height: $frame-h;
+  background-image: url('/images/pitcher-sprite.png');
+  background-size: $sheet-w $sheet-h;
+  background-repeat: no-repeat;
+  z-index: 4;
+  image-rendering: pixelated;
+}
+
+.frame-0 { background-position: 0 0; }
+.frame-1 { background-position: -110px 0; }
+.frame-2 { background-position: -220px 0; }
+.frame-3 { background-position: -330px 0; }
+.frame-4 { background-position: -440px 0; }
+.frame-5 { background-position: -550px 0; }
+.frame-6 { background-position: -660px 0; }
+.frame-7 { background-position: -770px 0; }

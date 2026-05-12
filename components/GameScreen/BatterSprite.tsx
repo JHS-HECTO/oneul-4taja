@@ -1,51 +1,72 @@
 'use client';
 import { useEffect, useState } from 'react';
-import clsx from 'clsx';
 import { useGameStore } from 'lib/store/gameStore';
 import styles from './BatterSprite.module.scss';
 
-type Frame = 'idle' | 'swing_wind' | 'swing_contact' | 'homerun' | 'strikeout';
+// 12-frame sprite sheet (2×6 grid):
+// Row 0 (0-5): idle → stance → lift → wind → wind_peak → stride
+// Row 1 (6-11): load → contact → post_contact → follow_through → strikeout → homerun
+const FRAMES = {
+  IDLE: 0,
+  STANCE: 1,
+  LIFT: 2,
+  WIND: 3,
+  WIND_PEAK: 4,
+  STRIDE: 5,
+  LOAD: 6,
+  CONTACT: 7,
+  POST_CONTACT: 8,
+  FOLLOW_THROUGH: 9,
+  STRIKEOUT: 10,
+  HOMERUN: 11,
+} as const;
 
-// 스윙 시퀀스 타이밍 (총 judging 800ms 안에 들어가야 함)
-const SWING_WIND_MS = 90;      // 0-90ms: 백스윙
-const SWING_CONTACT_MS = 110;  // 90-200ms: 임팩트
-// 200-800ms: 최종 포즈 (homerun/strikeout/swing_contact 유지)
+// Swing motion frames in order (10 frames over ~400ms)
+const SWING_SEQUENCE = [
+  FRAMES.STANCE,
+  FRAMES.LIFT,
+  FRAMES.WIND,
+  FRAMES.WIND_PEAK,
+  FRAMES.STRIDE,
+  FRAMES.LOAD,
+  FRAMES.CONTACT,
+  FRAMES.POST_CONTACT,
+  FRAMES.FOLLOW_THROUGH,
+];
+const FRAME_DURATION_MS = 45; // 9 frames × 45ms = 405ms swing
 
 export function BatterSprite() {
   const phase = useGameStore((s) => s.phase);
   const lastResult = useGameStore((s) => s.lastResult);
-
-  const [frame, setFrame] = useState<Frame>('idle');
+  const [frame, setFrame] = useState<number>(FRAMES.IDLE);
 
   useEffect(() => {
-    // 게임 진행 중이면 idle, 그 외 결과 진입 시 시퀀스 실행
     if (phase === 'playing' || phase === 'title' || phase === 'intro') {
-      setFrame('idle');
+      setFrame(FRAMES.IDLE);
       return;
     }
 
     if (phase === 'judging' && lastResult) {
-      // 1) 백스윙
-      setFrame('swing_wind');
-      const t1 = setTimeout(() => {
-        // 2) 임팩트
-        setFrame('swing_contact');
-        const t2 = setTimeout(() => {
-          // 3) 최종 포즈
-          if (lastResult === 'homerun') setFrame('homerun');
-          else if (lastResult === 'strike') setFrame('strikeout');
-          // hit 의 경우 swing_contact 유지
-        }, SWING_CONTACT_MS);
-        return () => clearTimeout(t2);
-      }, SWING_WIND_MS);
-      return () => clearTimeout(t1);
+      // Play through swing sequence, then settle on final pose
+      const timers: ReturnType<typeof setTimeout>[] = [];
+      SWING_SEQUENCE.forEach((f, i) => {
+        timers.push(setTimeout(() => setFrame(f), i * FRAME_DURATION_MS));
+      });
+      // Final pose based on outcome
+      timers.push(
+        setTimeout(() => {
+          if (lastResult === 'homerun') setFrame(FRAMES.HOMERUN);
+          else if (lastResult === 'strike') setFrame(FRAMES.STRIKEOUT);
+          // hit: stay on FOLLOW_THROUGH
+        }, SWING_SEQUENCE.length * FRAME_DURATION_MS)
+      );
+      return () => timers.forEach(clearTimeout);
     }
 
-    // cutscene/result/leaderboard 등: 직전 포즈 유지하지 않고 lastResult 기반 정적 표시
     if (phase === 'cutscene' && lastResult === 'homerun') {
-      setFrame('homerun');
+      setFrame(FRAMES.HOMERUN);
     }
   }, [phase, lastResult]);
 
-  return <div className={clsx(styles.sprite, styles[frame])} aria-hidden />;
+  return <div className={`${styles.sprite} ${styles[`frame-${frame}`]}`} aria-hidden />;
 }

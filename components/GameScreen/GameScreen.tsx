@@ -5,6 +5,7 @@ import { JUDGING_DELAY_MS } from 'lib/constants';
 import styles from './GameScreen.module.scss';
 import { Hud } from './Hud';
 import { BatterSprite } from './BatterSprite';
+import { PitcherSprite } from './PitcherSprite';
 import { Ball } from './Ball';
 import { Gauge } from './Gauge';
 import { EffectText } from './EffectText';
@@ -23,6 +24,7 @@ export function GameScreen() {
     <div className={styles.screen}>
       <div className={styles.background} aria-hidden />
       <Hud />
+      <PitcherSprite />
       <BatterSprite />
       <Ball />
       <Gauge />
