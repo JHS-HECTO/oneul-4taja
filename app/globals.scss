@@ -1,0 +1,39 @@
+:root {
+  // 게임 팔레트 (스펙 7.1)
+  --colors-game-grass: #2c8930;
+  --colors-game-soil: #8b4513;
+  --colors-game-red: #d62828;
+  --colors-game-yellow: #ffc83d;
+  --colors-game-beige: #f2e8c9;
+  --colors-game-sky: #87ceeb;
+  --colors-game-dark: #1a1a1a;
+  --colors-game-navy: #1a2b5c;
+
+  // 효과 색상
+  --colors-game-perfect: #ffc83d;
+  --colors-game-hit: #b6ff00;
+  --colors-game-miss: #ff4a6e;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-pixel), 'Galmuri11', monospace;
+  background: var(--colors-game-dark);
+  color: var(--colors-game-beige);
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+img, canvas {
+  image-rendering: pixelated;
+}
