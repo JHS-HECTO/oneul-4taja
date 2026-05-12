@@ -1,18 +1,12 @@
 'use client';
-import { useEffect } from 'react';
 import { useGameStore } from 'lib/store/gameStore';
 import { GameScreen } from 'components/GameScreen/GameScreen';
 import { Cutscene } from 'components/Cutscene/Cutscene';
+import { Title } from 'components/Title/Title';
+import { Intro } from 'components/Title/Intro';
 
 export default function Page() {
   const phase = useGameStore((s) => s.phase);
-
-  useEffect(() => {
-    // 임시: 진입 시 자동으로 게임 시작 (Phase 8에서 타이틀로 교체)
-    if (phase === 'title') {
-      useGameStore.setState({ phase: 'playing' });
-    }
-  }, [phase]);
 
   return (
     <main
@@ -34,7 +28,9 @@ export default function Page() {
           overflow: 'hidden',
         }}
       >
-        <GameScreen />
+        {phase === 'title' && <Title />}
+        {phase === 'intro' && <Intro />}
+        {(phase === 'playing' || phase === 'judging' || phase === 'cutscene') && <GameScreen />}
         {phase === 'cutscene' && <Cutscene />}
       </div>
     </main>
