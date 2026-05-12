@@ -9,7 +9,8 @@ $sheet-h: 654px;   // 2 × 327
 
 .sprite {
   position: absolute;
-  bottom: 12%;
+  // 홈플레이트 영역 (배경 하단 dirt 위), 전경에 크게
+  bottom: 14%;
   left: 50%;
   transform: translateX(-50%);
   width: $frame-w;
