@@ -1,0 +1,25 @@
+.hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--colors-game-beige);
+  text-shadow: 2px 2px 0 var(--colors-game-dark);
+  font-size: 10px;
+  letter-spacing: 2px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.round { color: var(--colors-game-beige); font-size: 14px; }
+.score { color: var(--colors-game-yellow); font-size: 14px; }
+.hits { color: var(--colors-game-hit); }
+.strikes { color: var(--colors-game-miss); }

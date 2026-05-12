@@ -1,0 +1,65 @@
+.gaugeWrap {
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  right: 5%;
+  z-index: 20;
+}
+
+.tapZone {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gauge {
+  position: relative;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 3px solid var(--colors-game-beige);
+  box-shadow: 3px 3px 0 var(--colors-game-dark);
+  overflow: hidden;
+}
+
+.good {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: var(--colors-game-hit);
+  opacity: 0.55;
+}
+
+.perfect {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: var(--colors-game-perfect);
+  box-shadow: 0 0 8px var(--colors-game-perfect);
+}
+
+.indicator {
+  position: absolute;
+  top: -6px; bottom: -6px;
+  width: 6px;
+  margin-left: -3px;
+  background: var(--colors-game-beige);
+  box-shadow: 2px 0 0 var(--colors-game-dark), -2px 0 0 var(--colors-game-dark);
+  z-index: 2;
+}
+
+.tapLabel {
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--colors-game-beige);
+  margin-top: 10px;
+  text-shadow: 2px 2px 0 var(--colors-game-dark);
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

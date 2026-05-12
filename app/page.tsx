@@ -1,8 +1,40 @@
+'use client';
+import { useEffect } from 'react';
+import { useGameStore } from 'lib/store/gameStore';
+import { GameScreen } from 'components/GameScreen/GameScreen';
+
 export default function Page() {
+  const phase = useGameStore((s) => s.phase);
+
+  useEffect(() => {
+    // 임시: 진입 시 자동으로 게임 시작 (Phase 8에서 타이틀로 교체)
+    if (phase === 'title') {
+      useGameStore.setState({ phase: 'playing' });
+    }
+  }, [phase]);
+
   return (
-    <main style={{ padding: 24 }}>
-      <h1 style={{ color: 'var(--colors-game-yellow)' }}>오늘의 4번타자</h1>
-      <p style={{ color: 'var(--colors-game-beige)' }}>준비 중...</p>
+    <main
+      style={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--colors-game-dark)',
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          aspectRatio: '9 / 16',
+          height: '100%',
+          maxHeight: '100vh',
+          overflow: 'hidden',
+        }}
+      >
+        <GameScreen />
+      </div>
     </main>
   );
 }

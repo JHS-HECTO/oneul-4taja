@@ -1,0 +1,19 @@
+.ball {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: var(--colors-game-beige);
+  border: 2px solid var(--colors-game-dark);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  box-shadow: 2px 2px 0 var(--colors-game-dark);
+  animation: approach 1.2s linear infinite;
+}
+
+@keyframes approach {
+  0%   { transform: translate(-50%, -50%) scale(0.4); top: 32%; opacity: 0.5; }
+  60%  { transform: translate(-50%, -50%) scale(0.9); top: 52%; opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.0); top: 58%; opacity: 1; }
+}

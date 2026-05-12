@@ -1,0 +1,23 @@
+// sprite sheet: 5 frames × 464×416. Total 2320×416.
+// CSS에서 절반 크기로 표시: 232×208 per frame. Total sheet 1160×208.
+
+.sprite {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 232px;
+  height: 208px;
+  background-image: url('/images/batter-sprite.png');
+  background-size: 1160px 208px;
+  background-repeat: no-repeat;
+  z-index: 5;
+  image-rendering: pixelated;
+  transition: background-position-x 0.05s;
+}
+
+.idle          { background-position-x: 0px; }
+.swing_wind    { background-position-x: -232px; }
+.swing_contact { background-position-x: -464px; }
+.homerun       { background-position-x: -696px; }
+.strikeout     { background-position-x: -928px; }
