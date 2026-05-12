@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useGameStore } from 'lib/store/gameStore';
 import { GameScreen } from 'components/GameScreen/GameScreen';
+import { Cutscene } from 'components/Cutscene/Cutscene';
 
 export default function Page() {
   const phase = useGameStore((s) => s.phase);
@@ -34,6 +35,7 @@ export default function Page() {
         }}
       >
         <GameScreen />
+        {phase === 'cutscene' && <Cutscene />}
       </div>
     </main>
   );

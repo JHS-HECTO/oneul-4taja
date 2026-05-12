@@ -7,6 +7,7 @@ import { Hud } from './Hud';
 import { BatterSprite } from './BatterSprite';
 import { Ball } from './Ball';
 import { Gauge } from './Gauge';
+import { EffectText } from './EffectText';
 
 export function GameScreen() {
   const phase = useGameStore((s) => s.phase);
@@ -25,6 +26,7 @@ export function GameScreen() {
       <BatterSprite />
       <Ball />
       <Gauge />
+      <EffectText />
     </div>
   );
 }
