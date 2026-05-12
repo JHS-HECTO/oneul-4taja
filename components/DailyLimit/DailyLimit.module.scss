@@ -1,0 +1,53 @@
+.daily { position: absolute; inset: 0; overflow: hidden; }
+
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  z-index: 0;
+  filter: grayscale(0.4) brightness(0.6);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.heading {
+  color: var(--colors-game-yellow);
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+  text-shadow: 3px 3px 0 var(--colors-game-red);
+}
+
+.body {
+  color: var(--colors-game-beige);
+  font-size: 12px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.button {
+  padding: 14px 32px;
+  background: var(--colors-game-red);
+  color: var(--colors-game-beige);
+  border: 4px solid var(--colors-game-beige);
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 3px;
+  box-shadow: 4px 4px 0 var(--colors-game-dark);
+  font-family: inherit;
+  text-shadow: 2px 2px 0 var(--colors-game-dark);
+}
