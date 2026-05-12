@@ -8,8 +8,8 @@ $sheet-h: 92px;
 
 .sprite {
   position: absolute;
-  // 외야 잔디 영역 (배경 기준 50-60% 정도). 투수는 멀리 있으니 작게.
-  top: 48%;
+  // 외야 잔디 영역 (배경 기준 55% 정도, placard 아래) — 멀리 있는 마운드 위
+  top: 55%;
   left: 50%;
   transform: translateX(-50%);
   width: $frame-w;

@@ -9,9 +9,10 @@ $sheet-h: 654px;   // 2 × 327
 
 .sprite {
   position: absolute;
-  // 홈플레이트 영역 (배경 하단 dirt 위), 전경에 크게
-  bottom: 14%;
-  left: 50%;
+  // 우타자는 카메라 시점에서 home plate 왼쪽 박스에 섬
+  // → 화면에서 왼쪽으로 오프셋. 공은 home plate (center) 위를 지나감
+  bottom: 12%;
+  left: 36%;
   transform: translateX(-50%);
   width: $frame-w;
   height: $frame-h;

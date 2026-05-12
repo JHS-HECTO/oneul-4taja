@@ -1,16 +1,17 @@
 .hud {
   position: absolute;
   top: 0; left: 0; right: 0;
-  z-index: 10;
-  padding: 14px 16px;
+  z-index: 30;
+  padding: 14px 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   color: var(--colors-game-beige);
-  text-shadow: 2px 2px 0 var(--colors-game-dark);
-  font-size: 10px;
+  text-shadow: 2px 2px 0 var(--colors-game-dark), -1px -1px 0 var(--colors-game-dark);
+  font-size: 12px;
   letter-spacing: 2px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 70%, transparent 100%);
+  pointer-events: none;
 }
 
 .row {
@@ -19,7 +20,7 @@
   align-items: center;
 }
 
-.round { color: var(--colors-game-beige); font-size: 14px; }
-.score { color: var(--colors-game-yellow); font-size: 14px; }
+.round { color: var(--colors-game-beige); font-size: 16px; }
+.score { color: var(--colors-game-yellow); font-size: 16px; }
 .hits { color: var(--colors-game-hit); }
 .strikes { color: var(--colors-game-miss); }
