@@ -30,8 +30,8 @@ export function Title() {
 
       {/* 하단 50%: 어두운 배경 + 정보/버튼 */}
       <div className={styles.infoZone}>
-        {/* 타이틀 배너 (이미지 영역과 살짝 겹치게 올라옴) */}
-        <div className={styles.titleBanner}>
+        {/* 타이틀 (박스 없이 큼직하게) */}
+        <div className={styles.titleBlock}>
           <h1 className={styles.heading}>오늘의 4번타자</h1>
           <p className={styles.subtitle}>타이밍 맞춰 풀스윙!</p>
         </div>
