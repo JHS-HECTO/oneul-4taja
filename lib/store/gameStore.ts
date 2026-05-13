@@ -125,6 +125,8 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
         maxRoundReached: newMax,
         dailyMilestonesDone: dailyMilestones,
         lifetime50Done: s.lifetime50Done || lifetime50JustDone,
+        // 회차 클리어 시 스트라이크 초기화 (회차별 독립적인 3-strike-out)
+        totalStrikes: 0,
         current: { round: nextRound, pitchIndex: 0, hits: 0, homerunInRound: false },
         phase: showCutscene ? 'cutscene' : 'playing',
         pendingReward: reward ?? s.pendingReward,

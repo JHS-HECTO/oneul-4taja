@@ -88,6 +88,17 @@ describe('proceedAfterJudging — round clear', () => {
     expect(s.phase).toBe('playing');
   });
 
+  it('round clear resets strikes to 0 (per-round independence)', () => {
+    useGameStore.setState({
+      phase: 'judging',
+      current: { round: 4, pitchIndex: 3, hits: 3, homerunInRound: false },
+      totalStrikes: 2, // had 2 strikes when clearing the round
+    });
+    useGameStore.getState().proceedAfterJudging();
+    expect(useGameStore.getState().totalStrikes).toBe(0);
+    expect(useGameStore.getState().current.round).toBe(5);
+  });
+
   it('homerun clears the round and shows cutscene', () => {
     useGameStore.setState({
       phase: 'judging',
