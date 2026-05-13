@@ -10,14 +10,14 @@ describe('rounds difficulty curve', () => {
     const r1 = getDifficulty(1);
     expect(r1.gaugeSpeedMs).toBe(1400);
     expect(r1.perfectZoneRatio).toBe(0.05);
-    expect(r1.goodZoneRatio).toBe(0.12);
+    expect(r1.goodZoneRatio).toBe(0.08);
   });
 
   it('round 50 is the hardest', () => {
     const r50 = getDifficulty(50);
     expect(r50.gaugeSpeedMs).toBe(400);
     expect(r50.perfectZoneRatio).toBeCloseTo(0.01, 5);
-    expect(r50.goodZoneRatio).toBeCloseTo(0.04, 5);
+    expect(r50.goodZoneRatio).toBeCloseTo(0.02, 5);
   });
 
   it('round 51+ plateaus at round 50', () => {

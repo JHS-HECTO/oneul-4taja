@@ -103,11 +103,12 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
       const nextRound = r.round + 1;
       const newMax = Math.max(s.maxRoundReached, r.round);
 
-      // 응모권 마일스톤 체크 — 새로 도달한 milestone 중 가장 큰 것에 팝업 표시
+      // 응모권 마일스톤 체크 — 새로 진입할 회차(nextRound)가 milestone 이상이면 지급
+      // 예) 9회 클리어 → nextRound=10 → milestone 10 즉시 지급 (10회 시작 시)
       let dailyMilestones = s.dailyMilestonesDone;
       let newlyReached: number | null = null;
       DAILY_TICKET_MILESTONES.forEach((m) => {
-        if (newMax >= m && !dailyMilestones.includes(m)) {
+        if (nextRound >= m && !dailyMilestones.includes(m)) {
           dailyMilestones = [...dailyMilestones, m];
           if (newlyReached === null || m > newlyReached) newlyReached = m;
         }

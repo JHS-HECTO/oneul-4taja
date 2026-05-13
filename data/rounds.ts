@@ -8,7 +8,8 @@ const TABLE: RoundDifficulty[] = [];
 for (let round = 1; round <= 50; round++) {
   const gaugeSpeedMs = 1400 - ((1400 - 400) * (round - 1)) / 49;
   const perfectZoneRatio = 0.05 - ((0.05 - 0.01) * (round - 1)) / 49;
-  const goodZoneRatio = 0.12 - ((0.12 - 0.04) * (round - 1)) / 49;
+  // 안타 영역도 처음부터 더 좁게 (1회=8%/side → 50회=2%/side)
+  const goodZoneRatio = 0.08 - ((0.08 - 0.02) * (round - 1)) / 49;
   TABLE.push({ round, gaugeSpeedMs, perfectZoneRatio, goodZoneRatio });
 }
 

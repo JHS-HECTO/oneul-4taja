@@ -55,7 +55,12 @@ export function Cutscene() {
 
   return (
     <div
-      className={clsx(styles.cutscene, kind === 'gameover' && styles.gameover)}
+      className={clsx(
+        styles.cutscene,
+        kind === 'gameover' && styles.gameover,
+        kind === 'homerun' && styles.homerun,
+        kind === 'milestone_50' && styles.milestone50
+      )}
       role="dialog"
       aria-label={LABELS[kind]}
     >

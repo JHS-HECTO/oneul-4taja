@@ -197,18 +197,19 @@ describe('startContinue', () => {
   });
 });
 
-describe('daily ticket milestones (10/20/30/40/50)', () => {
-  it('reaching round 10 marks milestone 10 and sets pendingReward', () => {
+describe('daily ticket milestones (10/20/30/40/50) — fires when entering the round', () => {
+  it('clearing round 9 → entering round 10 fires milestone 10', () => {
     useGameStore.setState({
       phase: 'judging',
-      current: { round: 10, pitchIndex: 2, hits: 3, homerunInRound: false },
-      maxRoundReached: 9,
+      current: { round: 9, pitchIndex: 2, hits: 3, homerunInRound: false },
+      maxRoundReached: 8,
       dailyMilestonesDone: [],
     });
     useGameStore.getState().proceedAfterJudging();
     const s = useGameStore.getState();
     expect(s.dailyMilestonesDone).toContain(10);
     expect(s.pendingReward).toEqual({ round: 10, count: 1 });
+    expect(s.current.round).toBe(10);
   });
 
   it('does not duplicate milestones or re-trigger reward', () => {
@@ -225,11 +226,11 @@ describe('daily ticket milestones (10/20/30/40/50)', () => {
     expect(s.pendingReward).toBeNull();
   });
 
-  it('hitting round 30 marks all three milestones (10, 20, 30)', () => {
+  it('clearing round 29 → entering round 30 fires all three milestones (10, 20, 30)', () => {
     useGameStore.setState({
       phase: 'judging',
-      current: { round: 30, pitchIndex: 2, hits: 3, homerunInRound: false },
-      maxRoundReached: 29,
+      current: { round: 29, pitchIndex: 2, hits: 3, homerunInRound: false },
+      maxRoundReached: 28,
       dailyMilestonesDone: [],
     });
     useGameStore.getState().proceedAfterJudging();
