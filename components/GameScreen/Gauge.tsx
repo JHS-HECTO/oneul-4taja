@@ -117,7 +117,7 @@ export function Gauge() {
           aria-label="누르고 있다가 떼서 스윙"
         >
           <span className={styles.buttonLabel}>
-            {isPressing ? '떼!' : 'PUSH'}
+            {isPressing ? 'STOP' : 'PUSH'}
           </span>
         </button>
       </div>

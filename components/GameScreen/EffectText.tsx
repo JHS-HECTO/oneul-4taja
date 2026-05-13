@@ -5,7 +5,7 @@ import styles from './EffectText.module.scss';
 
 const LABEL: Record<string, string> = {
   homerun: '★ HOMERUN ★',
-  hit: '딱! 안타!',
+  hit: '안타!',
   strike: '헛스윙!',
 };
 
