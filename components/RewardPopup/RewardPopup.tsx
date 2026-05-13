@@ -31,8 +31,9 @@ export function RewardPopup() {
   if (!pendingReward || phase !== 'playing' || !readyToShow) return null;
 
   return (
-    <div className={styles.overlay} onClick={dismissReward} role="dialog" aria-modal="true">
-      <div className={styles.card} onClick={(e) => e.stopPropagation()}>
+    // 딤 영역 클릭으로는 닫히지 않음 — 확인 버튼으로만 dismiss
+    <div className={styles.overlay} role="dialog" aria-modal="true">
+      <div className={styles.card}>
         <img className={styles.icon} src="/images/ticket.png" alt="응모권" />
         <div className={styles.title}>
           <span className={styles.red}>{pendingReward.round}회</span> 달성!

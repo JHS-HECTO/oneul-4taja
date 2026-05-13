@@ -12,6 +12,8 @@ export function Gauge() {
   const round = useGameStore((s) => s.current.round);
   const pitchIndex = useGameStore((s) => s.current.pitchIndex);
   const recordPitchResult = useGameStore((s) => s.recordPitchResult);
+  // 응모권 popup 대기 중에는 게이지 비활성 — popup 먼저 닫게 강제
+  const pendingReward = useGameStore((s) => s.pendingReward);
 
   const [isPressing, setIsPressing] = useState(false);
   const diff = getDifficulty(round);
@@ -24,7 +26,9 @@ export function Gauge() {
     [diff, recordPitchResult]
   );
 
-  const running = isPressing && phase === 'playing';
+  // pendingReward 있으면 running 막음 → 게이지 안 움직이고 swing 안 됨
+  const blocked = pendingReward !== null;
+  const running = isPressing && phase === 'playing' && !blocked;
 
   const { frame, stop, reset } = useGauge({
     gaugeSpeedMs: diff.gaugeSpeedMs,
@@ -43,10 +47,10 @@ export function Gauge() {
   const handlePressStart = useCallback(
     (e: React.MouseEvent | React.TouchEvent) => {
       e.preventDefault();
-      if (phase !== 'playing') return;
+      if (phase !== 'playing' || blocked) return;
       setIsPressing(true);
     },
-    [phase]
+    [phase, blocked]
   );
 
   const handlePressEnd = useCallback(
@@ -92,7 +96,7 @@ export function Gauge() {
           onTouchStart={handlePressStart}
           onTouchEnd={handlePressEnd}
           onTouchCancel={handlePressEnd}
-          disabled={phase !== 'playing'}
+          disabled={phase !== 'playing' || blocked}
           aria-label="누르고 있다가 떼서 스윙"
         >
           <span className={styles.buttonLabel}>
