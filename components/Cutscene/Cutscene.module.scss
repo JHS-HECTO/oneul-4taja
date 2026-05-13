@@ -35,13 +35,24 @@
   border: 4px solid var(--colors-game-yellow);
   box-shadow: 6px 6px 0 var(--colors-game-red);
   animation: shake 0.4s ease-out;
+  white-space: pre-line;
+}
+
+// 게임오버 라벨 — 전광판(이미지 중앙) 위에 두 줄로 표시
+.gameover .labelWrap {
+  top: 32%;
 }
 
 .gameover .label {
   color: var(--colors-game-beige);
-  text-shadow: 3px 3px 0 var(--colors-game-dark);
-  border-color: var(--colors-game-miss);
-  box-shadow: 6px 6px 0 var(--colors-game-dark);
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: 6px;
+  padding: 14px 32px 10px;
+  text-shadow: 4px 4px 0 var(--colors-game-dark);
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 @keyframes fade-in {

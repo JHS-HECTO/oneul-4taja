@@ -27,7 +27,7 @@ const IMAGES: Record<CutsceneKind, string> = {
 const LABELS: Record<CutsceneKind, string> = {
   homerun: '★ 홈런 ★',
   milestone_50: '50회 클리어!',
-  gameover: 'GAME OVER',
+  gameover: 'GAME\nOVER',
 };
 
 export function Cutscene() {
