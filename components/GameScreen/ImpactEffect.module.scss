@@ -1,7 +1,27 @@
 // Impact effect at bat-ball contact point.
-// All animations start at T=1200ms (contact moment in judging phase).
-// 8-bit pixelated burst — sharp clip-path shapes, no gradients.
-// Sized small (max ~100px) so the ball trajectory remains visible.
+// All animations start at T=1200ms (contact moment).
+// 8-bit pixelated style: sharp clip-path shapes + drop-shadow outlines.
+
+// Shared: 8-point spiky star (alternating long/short rays)
+$star-shape: polygon(
+  50% 0%,    58% 34%,
+  85% 15%,   66% 42%,
+  100% 50%,  66% 58%,
+  85% 85%,   58% 66%,
+  50% 100%,  42% 66%,
+  15% 85%,   34% 58%,
+  0% 50%,    34% 42%,
+  15% 15%,   42% 34%
+);
+
+// Shared: 4-direction outline filter (pixel-art border)
+@mixin pixel-outline {
+  filter:
+    drop-shadow(2px 0 0 var(--colors-game-dark))
+    drop-shadow(-2px 0 0 var(--colors-game-dark))
+    drop-shadow(0 2px 0 var(--colors-game-dark))
+    drop-shadow(0 -2px 0 var(--colors-game-dark));
+}
 
 .impactWrap {
   position: absolute;
@@ -13,19 +33,36 @@
   height: 0;
 }
 
-// ============================
-// HIT (subtle, focused)
-// ============================
+// =================================================================
+// HIT (small focused impact)
+// =================================================================
+.hitRays {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  margin: -55px 0 0 -55px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--colors-game-yellow) 0deg,
+    var(--colors-game-yellow) 4deg,
+    transparent 4deg,
+    transparent 22.5deg
+  );
+  mask-image: radial-gradient(circle, transparent 25%, black 35%, black 90%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, transparent 25%, black 35%, black 90%, transparent 100%);
+  opacity: 0;
+  animation: rays-burst-small 450ms ease-out forwards;
+  animation-delay: 1200ms;
+}
+
 .hitStar {
   position: absolute;
-  width: 48px;
-  height: 48px;
-  margin: -24px 0 0 -24px;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
   background: var(--colors-game-yellow);
-  clip-path: polygon(
-    50% 0%, 62% 38%, 100% 50%, 62% 62%,
-    50% 100%, 38% 62%, 0% 50%, 38% 38%
-  );
+  clip-path: $star-shape;
+  @include pixel-outline;
   opacity: 0;
   animation: pop-star 400ms ease-out forwards;
   animation-delay: 1200ms;
@@ -37,104 +74,138 @@
   height: 8px;
   margin: -4px 0 0 -4px;
   background: var(--colors-game-beige);
-  border: 1px solid var(--colors-game-dark);
+  @include pixel-outline;
   opacity: 0;
   animation: spark-fly 400ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
-// ============================
-// HOMERUN — layered stars + bright core + sparks + flash
-// ============================
-.hrCore {
+// =================================================================
+// HOMERUN (full elaborate impact)
+// =================================================================
+
+// Layer 1 — sunburst rays (back-most)
+.hrRays {
   position: absolute;
-  width: 24px;
-  height: 24px;
-  margin: -12px 0 0 -12px;
-  background: #ffffff;
-  border-radius: 50%;
-  box-shadow:
-    0 0 18px 8px rgba(255, 255, 255, 0.8),
-    0 0 36px 16px rgba(255, 248, 200, 0.5);
+  width: 220px;
+  height: 220px;
+  margin: -110px 0 0 -110px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--colors-game-yellow) 0deg,
+    var(--colors-game-yellow) 5deg,
+    transparent 5deg,
+    transparent 22.5deg
+  );
+  mask-image: radial-gradient(circle, transparent 18%, black 28%, black 92%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, transparent 18%, black 28%, black 92%, transparent 100%);
   opacity: 0;
-  animation: hr-core 350ms ease-out forwards;
+  animation: rays-burst-big 600ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
+// Layer 2 — expanding pulse rings (3 staggered)
+.pulseRing {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin: -25px 0 0 -25px;
+  border: 3px solid var(--colors-game-yellow);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 0 1px var(--colors-game-dark) inset, 0 0 0 1px var(--colors-game-dark);
+}
+
+.pulseRing1 { animation: pulse-ring 500ms ease-out forwards; animation-delay: 1200ms; }
+.pulseRing2 { animation: pulse-ring 500ms ease-out forwards; animation-delay: 1300ms; }
+.pulseRing3 { animation: pulse-ring 500ms ease-out forwards; animation-delay: 1400ms; }
+
+// Layer 3 — outer star (largest, primary color)
 .hrStarOuter {
   position: absolute;
   width: 110px;
   height: 110px;
   margin: -55px 0 0 -55px;
   background: var(--colors-game-yellow);
-  clip-path: polygon(
-    50% 0%, 62% 38%, 100% 50%, 62% 62%,
-    50% 100%, 38% 62%, 0% 50%, 38% 38%
-  );
+  clip-path: $star-shape;
+  @include pixel-outline;
   opacity: 0;
   animation: hr-outer 600ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
+// Layer 4 — middle star (counter-rotating, lighter)
 .hrStarMid {
   position: absolute;
-  width: 80px;
-  height: 80px;
-  margin: -40px 0 0 -40px;
+  width: 76px;
+  height: 76px;
+  margin: -38px 0 0 -38px;
   background: var(--colors-game-perfect);
-  clip-path: polygon(
-    50% 0%, 62% 38%, 100% 50%, 62% 62%,
-    50% 100%, 38% 62%, 0% 50%, 38% 38%
-  );
+  clip-path: $star-shape;
+  @include pixel-outline;
   opacity: 0;
   animation: hr-mid 550ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
+// Layer 5 — inner star (white-cream highlight)
 .hrStarInner {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  margin: -25px 0 0 -25px;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
   background: var(--colors-game-beige);
-  clip-path: polygon(
-    50% 0%, 62% 38%, 100% 50%, 62% 62%,
-    50% 100%, 38% 62%, 0% 50%, 38% 38%
-  );
+  clip-path: $star-shape;
+  @include pixel-outline;
   opacity: 0;
   animation: hr-inner 500ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
+// Layer 6 — bright white core
+.hrCore {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 14px 6px rgba(255, 255, 255, 0.9),
+    0 0 32px 12px rgba(255, 248, 200, 0.55);
+  opacity: 0;
+  animation: hr-core 380ms ease-out forwards;
+  animation-delay: 1200ms;
+}
+
+// Layer 7 — 8 large sparks flying outward
 .sparkBig {
   position: absolute;
   width: 14px;
   height: 14px;
   margin: -7px 0 0 -7px;
   background: var(--colors-game-yellow);
-  border: 2px solid var(--colors-game-dark);
+  @include pixel-outline;
   opacity: 0;
-  animation: spark-big-fly 600ms ease-out forwards;
+  animation: spark-big-fly 650ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
-// ============================
-// Screen flash (homerun)
-// ============================
+// Screen-wide flash (homerun only)
 .screenFlash {
   position: absolute;
   inset: 0;
-  background: rgba(255, 248, 200, 0.7);
+  background: rgba(255, 248, 200, 0.75);
   z-index: 24;
   pointer-events: none;
   opacity: 0;
-  animation: screen-flash 250ms ease-out forwards;
+  animation: screen-flash 280ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
-// ============================
+// =================================================================
 // Keyframes
-// ============================
+// =================================================================
 @keyframes pop-star {
   0%   { transform: scale(0.2) rotate(0deg); opacity: 0; }
   15%  { transform: scale(1.6) rotate(15deg); opacity: 1; }
@@ -144,38 +215,56 @@
 @keyframes spark-fly {
   0%   { transform: rotate(var(--angle)) translateX(6px) scale(0); opacity: 1; }
   30%  { transform: rotate(var(--angle)) translateX(28px) scale(1); opacity: 1; }
-  100% { transform: rotate(var(--angle)) translateX(56px) scale(0.5); opacity: 0; }
+  100% { transform: rotate(var(--angle)) translateX(60px) scale(0.5); opacity: 0; }
 }
 
-@keyframes hr-core {
-  0%   { transform: scale(0.2); opacity: 0; }
-  20%  { transform: scale(1.8); opacity: 1; }
-  60%  { transform: scale(2.5); opacity: 0.5; }
-  100% { transform: scale(3.0); opacity: 0; }
+@keyframes rays-burst-small {
+  0%   { transform: scale(0.4) rotate(0deg); opacity: 0; }
+  20%  { transform: scale(1.0) rotate(8deg); opacity: 0.75; }
+  100% { transform: scale(1.8) rotate(22deg); opacity: 0; }
+}
+
+@keyframes rays-burst-big {
+  0%   { transform: scale(0.4) rotate(0deg); opacity: 0; }
+  18%  { transform: scale(1.0) rotate(10deg); opacity: 0.95; }
+  100% { transform: scale(2.4) rotate(35deg); opacity: 0; }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.3); opacity: 1; }
+  60%  { opacity: 0.7; }
+  100% { transform: scale(4); opacity: 0; }
 }
 
 @keyframes hr-outer {
   0%   { transform: scale(0.2) rotate(0deg); opacity: 0; }
   15%  { transform: scale(1.5) rotate(20deg); opacity: 1; }
-  100% { transform: scale(2.0) rotate(70deg); opacity: 0; }
+  100% { transform: scale(2.1) rotate(75deg); opacity: 0; }
 }
 
 @keyframes hr-mid {
   0%   { transform: scale(0.3) rotate(22deg); opacity: 0; }
   15%  { transform: scale(1.5) rotate(0deg); opacity: 1; }
-  100% { transform: scale(2.0) rotate(-50deg); opacity: 0; }
+  100% { transform: scale(2.0) rotate(-55deg); opacity: 0; }
 }
 
 @keyframes hr-inner {
   0%   { transform: scale(0.4) rotate(45deg); opacity: 0; }
   15%  { transform: scale(1.6) rotate(60deg); opacity: 1; }
-  100% { transform: scale(2.2) rotate(110deg); opacity: 0; }
+  100% { transform: scale(2.2) rotate(120deg); opacity: 0; }
+}
+
+@keyframes hr-core {
+  0%   { transform: scale(0.2); opacity: 0; }
+  20%  { transform: scale(1.8); opacity: 1; }
+  60%  { transform: scale(2.4); opacity: 0.5; }
+  100% { transform: scale(2.8); opacity: 0; }
 }
 
 @keyframes spark-big-fly {
   0%   { transform: rotate(var(--angle)) translateX(8px) scale(0); opacity: 1; }
   25%  { transform: rotate(var(--angle)) translateX(40px) scale(1); opacity: 1; }
-  100% { transform: rotate(var(--angle)) translateX(100px) scale(0.4); opacity: 0; }
+  100% { transform: rotate(var(--angle)) translateX(110px) scale(0.4); opacity: 0; }
 }
 
 @keyframes screen-flash {

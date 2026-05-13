@@ -19,12 +19,12 @@ export function ImpactEffect() {
   const phase = useGameStore((s) => s.phase);
   const lastResult = useGameStore((s) => s.lastResult);
 
-  // No effect during non-judging or miss
   if (phase !== 'judging' || !lastResult || lastResult === 'strike') return null;
 
   if (lastResult === 'hit') {
     return (
       <div className={styles.impactWrap} aria-hidden>
+        <div className={styles.hitRays} />
         <div className={styles.hitStar} />
         {SPARK_DIRECTIONS_HIT.map((angle) => (
           <Spark key={angle} angle={angle} className={styles.spark ?? ''} />
@@ -33,15 +33,24 @@ export function ImpactEffect() {
     );
   }
 
-  // HOMERUN — 3 layered stars + bright core + 8 sparks + screen flash
+  // HOMERUN — full 7-layer composition
   return (
     <>
       <div className={styles.screenFlash} aria-hidden />
       <div className={styles.impactWrap} aria-hidden>
+        {/* Layer 1: sunburst rays */}
+        <div className={styles.hrRays} />
+        {/* Layer 2: 3 staggered pulse rings */}
+        <div className={`${styles.pulseRing} ${styles.pulseRing1}`} />
+        <div className={`${styles.pulseRing} ${styles.pulseRing2}`} />
+        <div className={`${styles.pulseRing} ${styles.pulseRing3}`} />
+        {/* Layers 3-5: 3 counter-rotating stars */}
         <div className={styles.hrStarOuter} />
         <div className={styles.hrStarMid} />
         <div className={styles.hrStarInner} />
+        {/* Layer 6: bright white core */}
         <div className={styles.hrCore} />
+        {/* Layer 7: 8 sparks flying out */}
         {SPARK_DIRECTIONS_HR.map((angle) => (
           <Spark key={angle} angle={angle} className={styles.sparkBig ?? ''} />
         ))}
