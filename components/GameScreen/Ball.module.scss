@@ -1,26 +1,66 @@
+// Ball animations — outcome-specific.
+// Each starts at T=700ms (pitcher release) relative to judging start.
+// Approach phase (700-1200ms in judging = 0-500ms relative to animation):
+//   small → bigger, pitcher hand → strike zone (just past batter)
+// Post-contact phase (1200ms+ in judging = 500ms+ relative to animation):
+//   varies by outcome.
+
+$ball-size: 36px;
+
 .ball {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: $ball-size;
+  height: $ball-size;
   background-image: url('/images/ball.png');
   background-size: contain;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   z-index: 7;
   pointer-events: none;
-  // Animation starts at T=700ms relative to judging phase, lasts 500ms
-  animation: approach 500ms linear forwards;
   animation-delay: 700ms;
-
-  // Initial state (before animation starts)
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  // Initial state (before animation kicks in)
   left: 50%;
-  top: 48%;
+  top: 60%;
   transform: translate(-50%, -50%) scale(0.18);
   opacity: 0;
 }
 
-@keyframes approach {
-  0%   { left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
+.homerun { animation-name: ball-homerun; animation-duration: 1300ms; }
+.hit     { animation-name: ball-hit;     animation-duration: 1300ms; }
+.strike  { animation-name: ball-strike;  animation-duration: 1300ms; }
+
+// 0-38% of animation (0-500ms): approach to strike zone (T=700-1200ms in judging)
+// 38-100% of animation (500-1300ms): post-contact trajectory
+
+@keyframes ball-homerun {
+  // approach
+  0%   { left: 50%; top: 60%; transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
   10%  { opacity: 1; }
-  100% { left: 56%; top: 78%; transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  38%  { left: 56%; top: 76%; transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  // post-contact: ball launches HIGH UP into the sky/outfield with trail of motion
+  55%  { left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.7); opacity: 1; }
+  80%  { left: 42%; top: 20%; transform: translate(-50%, -50%) scale(0.35); opacity: 1; }
+  100% { left: 38%; top: 0%;  transform: translate(-50%, -50%) scale(0.15); opacity: 0; }
+}
+
+@keyframes ball-hit {
+  0%   { left: 50%; top: 60%; transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
+  10%  { opacity: 1; }
+  38%  { left: 56%; top: 76%; transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  // post-contact: line drive — ball flies up-and-out to outfield (moderate angle)
+  60%  { left: 65%; top: 55%; transform: translate(-50%, -50%) scale(0.65); opacity: 1; }
+  100% { left: 80%; top: 35%; transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+}
+
+@keyframes ball-strike {
+  0%   { left: 50%; top: 60%; transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
+  10%  { opacity: 1; }
+  38%  { left: 56%; top: 76%; transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  // post-contact: batter misses — ball continues PAST the batter toward the camera
+  // (grows bigger as it approaches viewer, then exits frame downward)
+  60%  { left: 52%; top: 90%; transform: translate(-50%, -50%) scale(1.8); opacity: 1; }
+  85%  { left: 50%; top: 105%; transform: translate(-50%, -50%) scale(2.6); opacity: 1; }
+  100% { left: 50%; top: 115%; transform: translate(-50%, -50%) scale(3.0); opacity: 0; }
 }
