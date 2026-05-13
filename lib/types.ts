@@ -64,13 +64,12 @@ export type GameState = {
   pendingReward: PendingReward | null;
 };
 
-// 회별 난이도 파라미터 (홈런·안타 존이 독립적으로 움직임)
+// 회별 난이도 파라미터 — 단일 게이지, 홈런 가운데 + 안타 양옆
 export type RoundDifficulty = {
   round: number;
-  homerunSpeedMs: number;   // 홈런 게이지 1바퀴 시간 (낮을수록 빠름)
-  hitSpeedMs: number;       // 안타 게이지 1바퀴 시간 (홈런보다 보통 느림 — 잡기 쉽게)
+  gaugeSpeedMs: number;     // 게이지 좌→우 1바퀴 시간 (낮을수록 빠름)
   perfectZoneRatio: number; // 홈런존 가로 폭 (0~1)
-  hitZoneRatio: number;     // 안타존 가로 폭 (0~1) — 단일 띠 (양옆 합쳐서)
+  goodZoneRatio: number;    // 홈런존 한쪽 옆 안타존 폭 (0~1, per-side)
 };
 
 // 게이지 1프레임 상태
