@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { useGameStore } from 'lib/store/gameStore';
 import styles from './RewardPopup.module.scss';
 
-// Defer popup briefly so the round transition banner has time to play out
-// before the popup overlay covers the screen.
-const POPUP_DEFER_MS = 1700;
+// Defer popup briefly so the round transition banner gets a moment to register
+// (user sees '○회' banner for ~400ms before popup covers it).
+const POPUP_DEFER_MS = 400;
 
 export function RewardPopup() {
   const pendingReward = useGameStore((s) => s.pendingReward);
