@@ -15,9 +15,13 @@ export function computeGaugePosition(elapsedMs: number, gaugeSpeedMs: number): G
   }
 }
 
+const CENTER_FRAME: GaugeFrame = { position: 0.5, direction: 1 };
+
 /**
  * useGauge — running=true 동안 매 프레임 위치 업데이트.
- * stop()으로 정지하면 onStop 콜백에 현재 위치를 전달.
+ * 누르기 시작할 때 phase 보정으로 첫 프레임이 위치 0.5(중앙)부터 출발 → "프리뷰 중앙"에서
+ * 자연스럽게 시작. 정지(stop) 후 프레임은 정지 위치 그대로 유지 (시각=판정 일치).
+ * reset()으로 다음 투구 시작 시 중앙(0.5) 프리뷰 상태로 복원.
  */
 export function useGauge(opts: {
   gaugeSpeedMs: number;
@@ -25,14 +29,15 @@ export function useGauge(opts: {
   onStop?: (position: number) => void;
 }) {
   const { gaugeSpeedMs, running, onStop } = opts;
-  const [frame, setFrame] = useState<GaugeFrame>({ position: 0, direction: 1 });
+  const [frame, setFrame] = useState<GaugeFrame>(CENTER_FRAME);
   const startedAtRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
-  const frameRef = useRef<GaugeFrame>({ position: 0, direction: 1 });
+  const frameRef = useRef<GaugeFrame>(CENTER_FRAME);
 
   useEffect(() => {
     if (!running) return;
-    startedAtRef.current = performance.now();
+    // Phase shift so first frame at position 0.5 going right (smooth start from preview)
+    startedAtRef.current = performance.now() - gaugeSpeedMs / 2;
     const tick = (now: number) => {
       const elapsed = now - (startedAtRef.current ?? now);
       const f = computeGaugePosition(elapsed, gaugeSpeedMs);
@@ -51,8 +56,14 @@ export function useGauge(opts: {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
+    // Don't reset frame state — keep it at the captured position so visual stays put
     if (onStop) onStop(frameRef.current.position);
   }, [onStop]);
 
-  return { frame, stop };
+  const reset = useCallback(() => {
+    setFrame(CENTER_FRAME);
+    frameRef.current = CENTER_FRAME;
+  }, []);
+
+  return { frame, stop, reset };
 }

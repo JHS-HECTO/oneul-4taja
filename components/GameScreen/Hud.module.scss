@@ -1,4 +1,4 @@
-// 전광판 스타일 HUD — 양쪽 코너에 스코어보드 패널
+// 전광판 HUD — 좌(회+점수), 우(안타+스트라이크), 큼직한 텍스트
 .hud {
   position: absolute;
   top: 14px;
@@ -15,48 +15,51 @@
 .panel {
   background: var(--colors-game-navy);
   border: 3px solid var(--colors-game-yellow);
-  padding: 6px 12px;
+  padding: 8px 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   box-shadow: 3px 3px 0 var(--colors-game-dark);
-  min-width: 80px;
+  min-width: 100px;
 }
 
 .row {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 8px;
   justify-content: space-between;
+  white-space: nowrap;
 }
 
 .label {
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1px;
   color: var(--colors-game-beige);
   text-shadow: 1px 1px 0 var(--colors-game-dark);
+  flex-shrink: 0;
 }
 
 .value {
-  font-size: 16px;
   font-weight: 900;
   color: var(--colors-game-yellow);
   letter-spacing: 1px;
-  text-shadow: 1px 1px 0 var(--colors-game-dark);
+  text-shadow: 2px 2px 0 var(--colors-game-dark);
 }
 
 .roundVal {
-  font-size: 22px;
+  font-size: 28px;
 }
 
 .scoreVal {
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .hitVal {
+  font-size: 22px;
   color: var(--colors-game-hit);
 }
 
 .strikeVal {
+  font-size: 22px;
   color: var(--colors-game-miss);
 }
