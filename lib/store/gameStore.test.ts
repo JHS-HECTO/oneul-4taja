@@ -88,14 +88,15 @@ describe('proceedAfterJudging — round clear', () => {
     expect(s.phase).toBe('playing');
   });
 
-  it('round clear resets strikes to 0 (per-round independence)', () => {
+  it('round clear preserves outs across the session', () => {
     useGameStore.setState({
       phase: 'judging',
       current: { round: 4, pitchIndex: 3, hits: 3, homerunInRound: false },
-      totalStrikes: 2, // had 2 strikes when clearing the round
+      totalStrikes: 2, // had 2 outs when clearing the round
     });
     useGameStore.getState().proceedAfterJudging();
-    expect(useGameStore.getState().totalStrikes).toBe(0);
+    // Outs are NOT reset — they carry through the session (3-out game over)
+    expect(useGameStore.getState().totalStrikes).toBe(2);
     expect(useGameStore.getState().current.round).toBe(5);
   });
 

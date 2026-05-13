@@ -7,14 +7,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 6px;
   pointer-events: none;
 }
 
 .gauge {
   position: relative;
   width: 100%;
-  height: 28px;
   background: rgba(0, 0, 0, 0.75);
   border: 3px solid var(--colors-game-beige);
   box-shadow: 3px 3px 0 var(--colors-game-dark);
@@ -22,38 +21,48 @@
   pointer-events: none;
 }
 
-// 움직이는 존들
-.good {
+// 안타 게이지 — 더 얇고 위쪽
+.hitGauge {
+  height: 18px;
+}
+
+// 홈런 게이지 — 더 굵고 아래쪽
+.homerunGauge {
+  height: 24px;
+}
+
+// 안타 영역 (안타 게이지 안에서 움직임)
+.hitZone {
   position: absolute;
   top: 0; bottom: 0;
   background: var(--colors-game-hit);
-  opacity: 0.75;
-  border-left: 1px solid rgba(0, 0, 0, 0.3);
-  border-right: 1px solid rgba(0, 0, 0, 0.3);
+  opacity: 0.85;
+  border-left: 2px solid rgba(0, 0, 0, 0.4);
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
 }
 
-.perfect {
+// 홈런 영역 (홈런 게이지 안에서 움직임)
+.homerunZone {
   position: absolute;
   top: 0; bottom: 0;
   background: var(--colors-game-perfect);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
-    0 0 6px var(--colors-game-perfect);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 8px var(--colors-game-perfect);
 }
 
-// 정중앙 고정 커서
+// 각 게이지의 정중앙 커서 (양쪽 게이지 모두 같은 위치)
 .cursor {
   position: absolute;
-  top: -4px;
-  bottom: -4px;
+  top: -3px;
+  bottom: -3px;
   left: 50%;
-  width: 5px;
+  width: 4px;
   margin-left: -2px;
   background: var(--colors-game-beige);
   box-shadow:
     2px 0 0 var(--colors-game-dark),
-    -2px 0 0 var(--colors-game-dark),
-    0 0 6px rgba(255, 255, 255, 0.7);
+    -2px 0 0 var(--colors-game-dark);
   z-index: 5;
 }
 
@@ -71,11 +80,12 @@
   z-index: 6;
 }
 
-// 둥근 버튼 영역
+// 둥근 버튼
 .buttonRow {
   display: flex;
   justify-content: center;
   pointer-events: auto;
+  margin-top: 8px;
 }
 
 .roundButton {
@@ -99,10 +109,7 @@
   transition: transform 0.06s, box-shadow 0.06s;
   padding: 0;
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
 .roundButtonPressing {

@@ -33,7 +33,7 @@ export function Hud() {
           <span className={`${styles.value} ${styles.hitVal}`}>{hits}/{HITS_TO_CLEAR_ROUND}</span>
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>스트라이크</span>
+          <span className={styles.label}>아웃</span>
           <span className={`${styles.value} ${styles.strikeVal}`}>{strikes}/{STRIKES_TO_GAME_OVER}</span>
         </div>
       </div>

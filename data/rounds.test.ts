@@ -8,19 +8,21 @@ describe('rounds difficulty curve', () => {
 
   it('round 1 is the easiest', () => {
     const r1 = getDifficulty(1);
-    expect(r1.gaugeSpeedMs).toBe(2000);
+    expect(r1.homerunSpeedMs).toBe(2000);
+    expect(r1.hitSpeedMs).toBe(2600);
     expect(r1.perfectZoneRatio).toBe(0.10);
-    expect(r1.goodZoneRatio).toBe(0.15);
+    expect(r1.hitZoneRatio).toBe(0.30);
   });
 
   it('round 50 is the hardest', () => {
     const r50 = getDifficulty(50);
-    expect(r50.gaugeSpeedMs).toBe(600);
+    expect(r50.homerunSpeedMs).toBe(600);
+    expect(r50.hitSpeedMs).toBe(900);
     expect(r50.perfectZoneRatio).toBeCloseTo(0.02, 5);
-    expect(r50.goodZoneRatio).toBeCloseTo(0.06, 5);
+    expect(r50.hitZoneRatio).toBeCloseTo(0.12, 5);
   });
 
-  it('round 51 plateaus at round 50', () => {
+  it('round 51+ plateaus at round 50', () => {
     const r50 = getDifficulty(50);
     const r51 = getDifficulty(51);
     const r999 = getDifficulty(999);
@@ -32,9 +34,10 @@ describe('rounds difficulty curve', () => {
     for (let i = 1; i < 50; i++) {
       const prev = getDifficulty(i);
       const next = getDifficulty(i + 1);
-      expect(next.gaugeSpeedMs).toBeLessThan(prev.gaugeSpeedMs);
+      expect(next.homerunSpeedMs).toBeLessThan(prev.homerunSpeedMs);
+      expect(next.hitSpeedMs).toBeLessThan(prev.hitSpeedMs);
       expect(next.perfectZoneRatio).toBeLessThan(prev.perfectZoneRatio);
-      expect(next.goodZoneRatio).toBeLessThan(prev.goodZoneRatio);
+      expect(next.hitZoneRatio).toBeLessThan(prev.hitZoneRatio);
     }
   });
 });
