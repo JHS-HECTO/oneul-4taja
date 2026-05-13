@@ -40,7 +40,7 @@ export function Title() {
         <div className={styles.ticketBanner}>
           <img src="/images/ticket.png" alt="" className={styles.ticketIcon} aria-hidden />
           <div className={styles.ticketText}>
-            <span className={styles.ticketHeadline}>10회마다 응모권 1장!</span>
+            <span className={styles.ticketHeadline}>10회마다 응모권 지급!</span>
             <span className={styles.ticketSub}>10 / 20 / 30 / 40 / 50회 도달 시 지급</span>
           </div>
         </div>
