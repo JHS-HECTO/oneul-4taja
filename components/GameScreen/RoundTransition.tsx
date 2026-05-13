@@ -12,9 +12,11 @@ export function RoundTransition() {
   const prevRoundRef = useRef<number>(round);
 
   useEffect(() => {
-    // Show banner when round changes during playing (after round clear).
-    // Skip the initial 1회 (game start) and only show when round actually advances.
-    if (round !== prevRoundRef.current && round > 1 && phase === 'playing') {
+    // Only fire when game is in 'playing' phase. During cutscene/etc the round
+    // may have already incremented but we wait for play to resume.
+    // Skip initial 1회 (game start) — only show when round actually advances.
+    if (phase !== 'playing') return;
+    if (round !== prevRoundRef.current && round > 1) {
       setDisplayRound(round);
       const t = setTimeout(() => setDisplayRound(null), BANNER_DURATION_MS);
       prevRoundRef.current = round;
