@@ -38,22 +38,30 @@
   white-space: nowrap; // 기본: 한 줄
 }
 
-// 게임오버 라벨 — 전광판(이미지 중앙) 위에 두 줄로 표시
+// 게임오버 라벨 — 아래쪽 큰 전광판 영역(이미지 33-42%) 중앙에 자체 박스로 표시
+// 박스 자체로도 가독성 확보 (이미지 정렬에 의존하지 않음)
 .gameover .labelWrap {
-  top: 32%;
+  top: 35%;
 }
 
 .gameover .label {
-  color: var(--colors-game-beige);
-  font-size: 32px;
-  line-height: 1;
-  letter-spacing: 6px;
+  background: var(--colors-game-dark);
+  color: var(--colors-game-yellow);
+  border: 4px solid var(--colors-game-miss);
   padding: 14px 32px 10px;
-  text-shadow: 4px 4px 0 var(--colors-game-dark);
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  white-space: pre-line; // GAME\nOVER 두 줄 처리용
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: 8px;
+  text-shadow:
+    4px 4px 0 var(--colors-game-red),
+    -2px -2px 0 var(--colors-game-dark),
+    2px -2px 0 var(--colors-game-dark),
+    -2px 2px 0 var(--colors-game-dark);
+  box-shadow:
+    6px 6px 0 var(--colors-game-dark),
+    inset 0 0 0 2px var(--colors-game-yellow);
+  white-space: pre-line; // GAME\nOVER 두 줄
+  text-align: center;
 }
 
 // 홈런 라벨 — 크고 임팩트 있게 (바운스 + 회전 진입)
