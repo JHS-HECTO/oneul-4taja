@@ -7,10 +7,10 @@
   flex-direction: column;
 }
 
-// 상단 일러스트 영역 — 화면 상단 절반
+// 상단 이미지 영역 — 모바일에서 정보 영역 확보 위해 45%
 .imageZone {
   position: relative;
-  flex: 0 0 50%;
+  flex: 0 0 45%;
   overflow: hidden;
 }
 
@@ -33,70 +33,63 @@
   );
 }
 
-// 하단 정보/버튼 영역 — 화면 하단 절반 (어두운 배경)
+// 하단 정보/버튼 영역 — 55% 차지, 컴팩트
 .infoZone {
   flex: 1 1 auto;
   background: var(--colors-game-dark);
-  padding: 12px 24px 28px;
+  padding: 8px 20px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
+  min-height: 0;
 }
 
-// 타이틀 — 박스 없이 큼직하게, 강한 외곽선으로 가독성 확보
+// 타이틀 — 박스 없이 큼직하게, 강한 외곽선
 .titleBlock {
   text-align: center;
-  transform: translateY(-12px);
-  margin-bottom: -4px;
+  transform: translateY(-8px);
+  margin-bottom: -2px;
 }
 
 .heading {
-  font-size: 32px;
+  font-size: 26px;
   color: var(--colors-game-yellow);
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   white-space: nowrap;
   line-height: 1.1;
   text-shadow:
-    4px 4px 0 var(--colors-game-red),
+    3px 3px 0 var(--colors-game-red),
     -2px -2px 0 var(--colors-game-dark),
     2px -2px 0 var(--colors-game-dark),
     -2px 2px 0 var(--colors-game-dark),
-    2px 2px 0 var(--colors-game-dark),
-    0 -2px 0 var(--colors-game-dark),
-    0 2px 0 var(--colors-game-dark),
-    -2px 0 0 var(--colors-game-dark),
-    2px 0 0 var(--colors-game-dark);
+    2px 2px 0 var(--colors-game-dark);
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 10px;
   color: var(--colors-game-beige);
-  letter-spacing: 4px;
-  margin-top: 12px;
-  text-shadow:
-    2px 2px 0 var(--colors-game-dark),
-    -1px -1px 0 var(--colors-game-dark),
-    1px -1px 0 var(--colors-game-dark),
-    -1px 1px 0 var(--colors-game-dark);
+  letter-spacing: 3px;
+  margin-top: 8px;
+  text-shadow: 2px 2px 0 var(--colors-game-dark);
 }
 
-// 응모권 안내 배너
+// 응모권 배너 — 컴팩트
 .ticketBanner {
   width: 100%;
   background: var(--colors-game-navy);
   border: 3px solid var(--colors-game-yellow);
-  padding: 12px 14px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   box-shadow: 3px 3px 0 var(--colors-game-dark);
 }
 
 .ticketIcon {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -106,39 +99,42 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .ticketHeadline {
-  font-size: 14px;
+  font-size: 11px;
   color: var(--colors-game-yellow);
-  letter-spacing: 2px;
-  line-height: 1.4;
+  letter-spacing: 1.5px;
+  line-height: 1.2;
   text-shadow: 2px 2px 0 var(--colors-game-dark);
+  white-space: nowrap;
 }
 
 .ticketSub {
+  font-size: 8px;
+  color: var(--colors-game-beige);
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+// 세션 정보 — 한 줄로
+.sessions {
   font-size: 10px;
   color: var(--colors-game-beige);
   letter-spacing: 1px;
-  opacity: 0.95;
-  line-height: 1.3;
-}
-
-// 세션 정보 — 박스 없이
-.sessions {
-  font-size: 13px;
-  color: var(--colors-game-beige);
-  letter-spacing: 2px;
   text-align: center;
+  white-space: nowrap;
   text-shadow:
     2px 2px 0 var(--colors-game-dark),
-    -1px -1px 0 var(--colors-game-dark),
-    1px -1px 0 var(--colors-game-dark),
-    -1px 1px 0 var(--colors-game-dark);
+    -1px -1px 0 var(--colors-game-dark);
 }
 
 .sessionsHigh {
   color: var(--colors-game-yellow);
+  font-size: 13px;
 }
 
 // 버튼들
@@ -146,13 +142,13 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .startButton, .leaderboardButton {
   width: 100%;
-  padding: 14px;
-  font-size: 14px;
+  padding: 12px;
+  font-size: 13px;
   letter-spacing: 3px;
   border: 4px solid var(--colors-game-beige);
   color: var(--colors-game-beige);
@@ -179,6 +175,8 @@
 
 .startButton {
   background: var(--colors-game-red);
+  font-size: 14px;
+  padding: 14px;
 }
 
 .leaderboardButton {
