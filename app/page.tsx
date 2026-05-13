@@ -17,7 +17,11 @@ export default function Page() {
     <main
       style={{
         width: '100vw',
+        // svh = smallest viewport height (브라우저 chrome 포함 안 함) — 모바일에서 짤림 방지
+        // fallback to vh for older browsers
         height: '100vh',
+        minHeight: '100svh',
+        maxHeight: '100svh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -29,7 +33,7 @@ export default function Page() {
           position: 'relative',
           aspectRatio: '9 / 16',
           height: '100%',
-          maxHeight: '100vh',
+          maxHeight: '100svh',
           overflow: 'hidden',
         }}
       >
