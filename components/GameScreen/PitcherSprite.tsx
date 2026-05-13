@@ -1,44 +1,46 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameStore } from 'lib/store/gameStore';
 import styles from './PitcherSprite.module.scss';
 
-// 8-frame pitching motion: stance → set → leg_lift → knee_peak → stride → arm_cocked → release → follow_through
-const TOTAL_FRAMES = 8;
-const PITCH_FRAME_MS = 70; // 8 × 70 = 560ms full motion
-const PITCH_CYCLE_MS = 1500; // 한 사이클 (피칭 모션 + 리셋 휴식)
+// 6 frames: pitcher-01.png ~ pitcher-06.png
+// 1 STANCE, 2 SET, 3 KNEE_LIFT, 4 KNEE_PEAK, 5 STRIDE, 6 ARM_BACK (release pose)
+
+const PITCH_FRAME_SEQUENCE = [1, 2, 3, 4, 5, 6] as const;
+const PITCH_FRAME_MS = 117; // 6 × 117ms ≈ 700ms total wind-up
+
+// Pitcher animates during judging phase from T=0 to T=700ms
+// After T=700ms, holds on frame 6 (release pose) until phase changes
 
 export function PitcherSprite() {
   const phase = useGameStore((s) => s.phase);
-  const round = useGameStore((s) => s.current.round);
-  const pitchIndex = useGameStore((s) => s.current.pitchIndex);
-  const [frame, setFrame] = useState<number>(0);
-  const cycleStartRef = useRef<number>(0);
+  const [frame, setFrame] = useState<number>(1);
 
   useEffect(() => {
-    if (phase !== 'playing') {
-      setFrame(0);
+    // Reset to STANCE when playing/title
+    if (phase === 'playing' || phase === 'title' || phase === 'intro') {
+      setFrame(1);
       return;
     }
-    // Re-start motion at start of each pitch
-    cycleStartRef.current = performance.now();
-    setFrame(0);
 
-    const interval = setInterval(() => {
-      const elapsed = (performance.now() - cycleStartRef.current) % PITCH_CYCLE_MS;
-      if (elapsed < PITCH_FRAME_MS * TOTAL_FRAMES) {
-        const f = Math.floor(elapsed / PITCH_FRAME_MS);
-        setFrame(Math.min(f, TOTAL_FRAMES - 1));
-      } else {
-        // After motion finishes, hold on frame 0 (stance) until next cycle
-        setFrame(0);
-      }
-    }, 40);
-
-    return () => clearInterval(interval);
-  }, [phase, round, pitchIndex]);
+    if (phase === 'judging') {
+      const timers: ReturnType<typeof setTimeout>[] = [];
+      PITCH_FRAME_SEQUENCE.forEach((frameNum, i) => {
+        timers.push(setTimeout(() => setFrame(frameNum), i * PITCH_FRAME_MS));
+      });
+      return () => timers.forEach(clearTimeout);
+    }
+  }, [phase]);
 
   if (phase !== 'playing' && phase !== 'judging') return null;
 
-  return <div className={`${styles.sprite} ${styles[`frame-${frame}`]}`} aria-hidden />;
+  const frameStr = String(frame).padStart(2, '0');
+  return (
+    <img
+      src={`/images/pitcher-${frameStr}.png`}
+      alt=""
+      className={styles.sprite}
+      aria-hidden
+    />
+  );
 }

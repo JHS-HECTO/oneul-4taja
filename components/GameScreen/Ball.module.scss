@@ -1,23 +1,26 @@
 .ball {
   position: absolute;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background-image: url('/images/ball.png');
   background-size: contain;
   background-repeat: no-repeat;
   image-rendering: pixelated;
-  // 시작 위치: 투수 손 근처 + center, 끝 위치: 타자 우측 (strike zone 위치)
-  left: 50%;
-  top: 52%;
-  transform: translate(-50%, -50%) scale(0.18);
   z-index: 7;
   pointer-events: none;
-  animation: approach 1.4s linear infinite;
+  // Animation starts at T=700ms relative to judging phase, lasts 500ms
+  animation: approach 500ms linear forwards;
+  animation-delay: 700ms;
+
+  // Initial state (before animation starts)
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%) scale(0.18);
+  opacity: 0;
 }
 
 @keyframes approach {
-  0%   { left: 50%; top: 52%; transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
+  0%   { left: 50%; top: 48%; transform: translate(-50%, -50%) scale(0.18); opacity: 0; }
   10%  { opacity: 1; }
-  70%  { left: 56%; top: 73%; transform: translate(-50%, -50%) scale(0.85); opacity: 1; }
-  100% { left: 58%; top: 80%; transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+  100% { left: 56%; top: 78%; transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }

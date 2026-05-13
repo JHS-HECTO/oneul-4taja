@@ -1,40 +1,12 @@
-// sprite sheet: 12 frames in a 2 rows × 6 cols grid.
-// Source image: 2816×1536. Each frame: ~469×768 px in source.
-// CSS display: scale to 200×327 per frame (sheet appears 1200×654 total).
-
-$frame-w: 200px;
-$frame-h: 327px;
-$sheet-w: 1200px;  // 6 × 200
-$sheet-h: 654px;   // 2 × 327
-
 .sprite {
   position: absolute;
-  // 우타자는 카메라 시점에서 home plate 왼쪽 박스에 섬
-  // → 화면에서 왼쪽으로 오프셋. 공은 home plate (center) 위를 지나감
-  bottom: 12%;
+  bottom: 8%;
   left: 36%;
   transform: translateX(-50%);
-  width: $frame-w;
-  height: $frame-h;
-  background-image: url('/images/batter-sprite.png');
-  background-size: $sheet-w $sheet-h;
-  background-repeat: no-repeat;
+  width: 240px;
+  height: 240px;
   z-index: 5;
   image-rendering: pixelated;
+  pointer-events: none;
+  object-fit: contain;
 }
-
-// Row 0 (top row)
-.frame-0  { background-position: 0          0; }
-.frame-1  { background-position: -200px     0; }
-.frame-2  { background-position: -400px     0; }
-.frame-3  { background-position: -600px     0; }
-.frame-4  { background-position: -800px     0; }
-.frame-5  { background-position: -1000px    0; }
-
-// Row 1 (bottom row)
-.frame-6  { background-position: 0       -327px; }
-.frame-7  { background-position: -200px  -327px; }
-.frame-8  { background-position: -400px  -327px; }
-.frame-9  { background-position: -600px  -327px; }
-.frame-10 { background-position: -800px  -327px; }
-.frame-11 { background-position: -1000px -327px; }

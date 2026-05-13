@@ -1,5 +1,5 @@
 'use client';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import styles from './Gauge.module.scss';
 import { useGameStore } from 'lib/store/gameStore';
 import { useGauge } from 'lib/engine/gauge';
@@ -11,10 +11,11 @@ export function Gauge() {
   const round = useGameStore((s) => s.current.round);
   const recordPitchResult = useGameStore((s) => s.recordPitchResult);
 
-  const diff = getDifficulty(round);
-  const running = phase === 'playing';
+  const [isPressing, setIsPressing] = useState(false);
 
-  const handleStop = useCallback(
+  const diff = getDifficulty(round);
+
+  const handleRelease = useCallback(
     (position: number) => {
       const result = detectHit(position, diff);
       recordPitchResult(result);
@@ -22,11 +23,33 @@ export function Gauge() {
     [diff, recordPitchResult]
   );
 
+  // Gauge runs only while pressing AND in playing phase
+  const running = isPressing && phase === 'playing';
+
   const { frame, stop } = useGauge({
     gaugeSpeedMs: diff.gaugeSpeedMs,
     running,
-    onStop: handleStop,
+    onStop: handleRelease,
   });
+
+  const handlePressStart = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      if (phase !== 'playing') return;
+      setIsPressing(true);
+    },
+    [phase]
+  );
+
+  const handlePressEnd = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      if (!isPressing) return;
+      setIsPressing(false);
+      stop();
+    },
+    [isPressing, stop]
+  );
 
   if (phase !== 'playing' && phase !== 'judging') return null;
 
@@ -41,13 +64,14 @@ export function Gauge() {
       <button
         type="button"
         className={styles.tapZone}
-        onClick={stop}
-        onTouchStart={(e) => {
-          e.preventDefault();
-          stop();
-        }}
-        disabled={!running}
-        aria-label="탭해서 스윙"
+        onMouseDown={handlePressStart}
+        onMouseUp={handlePressEnd}
+        onMouseLeave={handlePressEnd}
+        onTouchStart={handlePressStart}
+        onTouchEnd={handlePressEnd}
+        onTouchCancel={handlePressEnd}
+        disabled={phase !== 'playing'}
+        aria-label="누르고 있다가 떼서 스윙"
       >
         <div className={styles.gauge}>
           <div className={styles.good} style={{ left: `${goodLeftStartPct}%`, width: `${goodWidthPct}%` }} />
@@ -55,7 +79,9 @@ export function Gauge() {
           <div className={styles.good} style={{ left: `${goodRightStartPct}%`, width: `${goodWidthPct}%` }} />
           <div className={styles.indicator} style={{ left: `${frame.position * 100}%` }} />
         </div>
-        <div className={styles.tapLabel}>▼ TAP TO SWING ▼</div>
+        <div className={styles.tapLabel}>
+          {phase === 'judging' ? '   ' : isPressing ? '▼ 손 떼면 스윙! ▼' : '▼ 누르고 있어! ▼'}
+        </div>
       </button>
     </div>
   );

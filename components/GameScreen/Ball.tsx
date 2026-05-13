@@ -4,6 +4,7 @@ import { useGameStore } from 'lib/store/gameStore';
 
 export function Ball() {
   const phase = useGameStore((s) => s.phase);
-  if (phase !== 'playing') return null;
+  // Ball only visible during judging (after pitcher release)
+  if (phase !== 'judging') return null;
   return <div className={styles.ball} aria-hidden />;
 }

@@ -3,70 +3,67 @@ import { useEffect, useState } from 'react';
 import { useGameStore } from 'lib/store/gameStore';
 import styles from './BatterSprite.module.scss';
 
-// 12-frame sprite sheet (2×6 grid):
-// Row 0 (0-5): idle → stance → lift → wind → wind_peak → stride
-// Row 1 (6-11): load → contact → post_contact → follow_through → strikeout → homerun
-const FRAMES = {
-  IDLE: 0,
-  STANCE: 1,
-  LIFT: 2,
-  WIND: 3,
-  WIND_PEAK: 4,
-  STRIDE: 5,
-  LOAD: 6,
-  CONTACT: 7,
-  POST_CONTACT: 8,
-  FOLLOW_THROUGH: 9,
-  STRIKEOUT: 10,
-  HOMERUN: 11,
-} as const;
+// 12 frames: batter-01.png ~ batter-12.png
+// 1 IDLE, 2 STANCE, 3 LOAD, 4 WIND_HALF, 5 WIND_PEAK, 6 STRIDE,
+// 7 DOWNSWING, 8 CONTACT, 9 POST_CONTACT, 10 FOLLOW_THROUGH,
+// 11 HOMERUN_POSE, 12 STRIKEOUT_POSE
 
-// Swing motion frames in order (10 frames over ~400ms)
-const SWING_SEQUENCE = [
-  FRAMES.STANCE,
-  FRAMES.LIFT,
-  FRAMES.WIND,
-  FRAMES.WIND_PEAK,
-  FRAMES.STRIDE,
-  FRAMES.LOAD,
-  FRAMES.CONTACT,
-  FRAMES.POST_CONTACT,
-  FRAMES.FOLLOW_THROUGH,
-];
-const FRAME_DURATION_MS = 45; // 9 frames × 45ms = 405ms swing
+// Swing sequence: frames 2→3→4→5→6→7→8→9→10 over 720ms (~80ms each)
+const SWING_FRAME_SEQUENCE = [2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+const SWING_FRAME_MS = 80; // 9 frames × 80ms = 720ms total
+// CONTACT (frame 8) is 7th in sequence (index 6) → at 6 × 80ms = 480ms into swing
+
+// Timing relative to phase=judging start:
+const BATTER_SWING_START_MS = 720; // start swing 720ms after gauge stops
+                                    // so contact (480ms into swing) happens at 1200ms
+                                    // (matching ball arrival time)
 
 export function BatterSprite() {
   const phase = useGameStore((s) => s.phase);
   const lastResult = useGameStore((s) => s.lastResult);
-  const [frame, setFrame] = useState<number>(FRAMES.IDLE);
+  const [frame, setFrame] = useState<number>(1); // IDLE
 
   useEffect(() => {
     if (phase === 'playing' || phase === 'title' || phase === 'intro') {
-      setFrame(FRAMES.IDLE);
+      setFrame(1); // IDLE
       return;
     }
 
     if (phase === 'judging' && lastResult) {
-      // Play through swing sequence, then settle on final pose
+      // Play swing sequence starting at BATTER_SWING_START_MS
       const timers: ReturnType<typeof setTimeout>[] = [];
-      SWING_SEQUENCE.forEach((f, i) => {
-        timers.push(setTimeout(() => setFrame(f), i * FRAME_DURATION_MS));
+
+      SWING_FRAME_SEQUENCE.forEach((frameNum, i) => {
+        timers.push(
+          setTimeout(() => setFrame(frameNum), BATTER_SWING_START_MS + i * SWING_FRAME_MS)
+        );
       });
-      // Final pose based on outcome
+
+      // After swing, settle on final outcome pose
+      const finalDelay = BATTER_SWING_START_MS + SWING_FRAME_SEQUENCE.length * SWING_FRAME_MS;
       timers.push(
         setTimeout(() => {
-          if (lastResult === 'homerun') setFrame(FRAMES.HOMERUN);
-          else if (lastResult === 'strike') setFrame(FRAMES.STRIKEOUT);
-          // hit: stay on FOLLOW_THROUGH
-        }, SWING_SEQUENCE.length * FRAME_DURATION_MS)
+          if (lastResult === 'homerun') setFrame(11);
+          else if (lastResult === 'strike') setFrame(12);
+          // hit: stays on frame 10 (FOLLOW_THROUGH)
+        }, finalDelay)
       );
+
       return () => timers.forEach(clearTimeout);
     }
 
     if (phase === 'cutscene' && lastResult === 'homerun') {
-      setFrame(FRAMES.HOMERUN);
+      setFrame(11);
     }
   }, [phase, lastResult]);
 
-  return <div className={`${styles.sprite} ${styles[`frame-${frame}`]}`} aria-hidden />;
+  const frameStr = String(frame).padStart(2, '0');
+  return (
+    <img
+      src={`/images/batter-${frameStr}.png`}
+      alt=""
+      className={styles.sprite}
+      aria-hidden
+    />
+  );
 }
