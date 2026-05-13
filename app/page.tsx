@@ -1,5 +1,6 @@
 'use client';
 import { useGameStore } from 'lib/store/gameStore';
+import { useParentBridge } from 'lib/hooks/useParentBridge';
 import { GameScreen } from 'components/GameScreen/GameScreen';
 import { Cutscene } from 'components/Cutscene/Cutscene';
 import { Title } from 'components/Title/Title';
@@ -12,6 +13,8 @@ import { RewardPopup } from 'components/RewardPopup/RewardPopup';
 
 export default function Page() {
   const phase = useGameStore((s) => s.phase);
+  // 부모(폴리볼) 통신 브릿지 활성화. 임베드 환경에서만 동작.
+  useParentBridge();
 
   return (
     <main

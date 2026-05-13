@@ -2,7 +2,10 @@
 
 폴리볼 두 번째 미니게임. 타이밍 맞춰 풀스윙하는 야구 타격 게임.
 
-**상태:** Plan A 완료 — mock 데이터로 단독 플레이 가능. 부모 통합/핸드오프(Plan B)는 별도 작업.
+**상태:** ✅ 통합 준비 완료 — postMessage 프로토콜 + 부모 mock 포함. 개발팀 인수인계용.
+
+> 📖 **개발팀 통합 가이드는 [`INTEGRATION.md`](./INTEGRATION.md) 참조.**
+> 부모 mock 페이지 (`public/parent-mock.html`) 로 양방향 메시지 흐름을 검증할 수 있습니다.
 
 ## 빠른 시작
 
@@ -11,7 +14,8 @@ pnpm install
 pnpm dev
 ```
 
-http://localhost:3000 — 9:16 모바일 비율 (큰 화면에서도 모바일처럼 표시).
+- **게임 단독 플레이**: http://localhost:3000 — 9:16 모바일 비율 (큰 화면에서도 모바일처럼 표시).
+- **부모 통합 검증**: http://localhost:3000/parent-mock.html — iframe + 메시지 로그 패널.
 
 ## 플레이 흐름
 
@@ -120,24 +124,34 @@ pnpm typecheck    # TypeScript 타입체크
 
 ## 테스트 커버리지
 
-48 unit tests 통과:
-- `data/rounds.test.ts` — 5 tests (난이도 곡선)
+56 unit tests 통과:
+- `data/rounds.test.ts` — 7 tests (난이도 곡선)
 - `data/leaderboard.test.ts` — 4 tests (mock 데이터)
-- `lib/engine/gauge.test.ts` — 6 tests (게이지 계산)
+- `lib/engine/gauge.test.ts` — 10 tests (게이지 계산)
 - `lib/engine/hitDetection.test.ts` — 10 tests (히트 판정)
-- `lib/store/gameStore.test.ts` — 23 tests (상태 전이)
+- `lib/store/gameStore.test.ts` — 25 tests (상태 전이 + emit)
 
-## 다음 (Plan B)
+## PostMessage 통합 (요약)
 
-- PostMessage 양방향 프로토콜 (`CLEANUP:PLAY_AD`, `CLEANUP:TICKET_REWARD`, `CLEANUP:GAME_OVER`, `CLEANUP:USER_INFO`, `CLEANUP:AD_COMPLETED`, etc.)
-- 부모 mock 페이지 (개발팀 통합 검증용)
-- `INTEGRATION.md` (백엔드 통합 명세)
-- `server-spec.html` (서버 기획서)
-- GitHub 저장소 + Vercel 프리뷰
-- 핸드오프 ZIP 패키지
+폴리볼(부모) ↔ 게임(iframe) 양방향 통신. prefix `CLEANUP:` (야구빠따의 `BBADA:` 와 구분).
+
+| 방향 | 메시지 | 시점 |
+|---|---|---|
+| 게임 → 부모 | `GAME_READY` | iframe 로드 직후 |
+| 부모 → 게임 | `USER_INFO` | 유저 nickname/team/카운터 주입 |
+| 게임 → 부모 | `PLAY_AD` | 이어하기 버튼 클릭 |
+| 부모 → 게임 | `AD_COMPLETED` / `AD_FAILED` | 광고 SDK 결과 |
+| 게임 → 부모 | `TICKET_REWARD` | 10/20/30/40/50회 진입 |
+| 게임 → 부모 | `GAME_OVER` | 게임 종료 (round/score/홈런/안타/아웃) |
+| 게임 → 부모 | `LEADERBOARD_REQUEST` | 리더보드 화면 진입 |
+| 부모 → 게임 | `LEADERBOARD_DATA` | 서버 조회 결과 (50 entries + my_rank) |
+
+자세한 스키마 / 발생 시점 / 부모 측 처리 예시는 [`INTEGRATION.md`](./INTEGRATION.md) 참조.
 
 ## 참고
 
+- **개발팀 통합 가이드**: [`INTEGRATION.md`](./INTEGRATION.md)
+- 부모 mock: `public/parent-mock.html` (http://localhost:3000/parent-mock.html)
 - 디자인 스펙: `docs/superpowers/specs/2026-05-12-oneul-4taja-design.md`
 - Plan A 상세: `docs/superpowers/plans/2026-05-12-foundation.md`
 - 시리즈 첫 게임: `야구빠따 키우기` — [JHS-HECTO/yagu-bbada](https://github.com/JHS-HECTO/yagu-bbada)

@@ -10,6 +10,7 @@ import {
   DAILY_TICKET_MILESTONES,
   TICKETS_PER_MILESTONE,
 } from 'lib/constants';
+import { emit } from 'lib/postMessage';
 
 type Actions = {
   startGame: () => void;
@@ -118,6 +119,13 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
         ? { round: newlyReached, count: TICKETS_PER_MILESTONE }
         : null;
 
+      // 응모권 마일스톤 → 부모에 즉시 emit (실제 적립은 폴리볼 백엔드 처리)
+      if (reward !== null) {
+        emit({ type: 'CLEANUP:TICKET_REWARD', round: reward.round, count: reward.count });
+      }
+
+      // 평생 50회 첫 도달 → GAME_OVER payload에 표기 (해당 게임 끝에 emit됨)
+
       // 평생 50회 첫 도달
       const lifetime50JustDone = r.round === 50 && !s.lifetime50Done;
       const showCutscene = r.homerunInRound || lifetime50JustDone;
@@ -149,6 +157,18 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
         set({ phase: 'continue_prompt' });
       } else {
         set({ phase: 'result' });
+        // 게임 종료 (이어하기 소진) → 부모에 결과 emit
+        emit({
+          type: 'CLEANUP:GAME_OVER',
+          round: s.maxRoundReached,
+          score: s.totalScore,
+          homeruns: s.totalHomeruns,
+          hits: s.totalHits,
+          strikes: s.totalStrikes,
+          ...(s.lifetime50Done && s.maxRoundReached >= 50
+            ? { first_50_cleared_this_game: true }
+            : {}),
+        });
       }
     } else {
       set({ phase: 'playing' });
@@ -165,7 +185,22 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
     });
   },
 
-  giveUp: () => set({ phase: 'result' }),
+  giveUp: () => {
+    const s = get();
+    set({ phase: 'result' });
+    // 게임 종료 → 부모에 결과 emit (리더보드 자동 등록용)
+    emit({
+      type: 'CLEANUP:GAME_OVER',
+      round: s.maxRoundReached,
+      score: s.totalScore,
+      homeruns: s.totalHomeruns,
+      hits: s.totalHits,
+      strikes: s.totalStrikes,
+      ...(s.lifetime50Done && s.maxRoundReached >= 50
+        ? { first_50_cleared_this_game: true }
+        : {}),
+    });
+  },
 
   dismissReward: () => set({ pendingReward: null }),
 

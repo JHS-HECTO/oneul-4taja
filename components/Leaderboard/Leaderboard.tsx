@@ -1,11 +1,12 @@
 'use client';
 import styles from './Leaderboard.module.scss';
-import { MOCK_LEADERBOARD } from 'data/leaderboard';
 import { getTeam } from 'data/teams';
 import { useGameStore } from 'lib/store/gameStore';
+import { useLeaderboard } from 'lib/hooks/useLeaderboard';
 
 export function Leaderboard() {
   const goToTitle = useGameStore((s) => s.goToTitle);
+  const { entries, loading } = useLeaderboard();
 
   return (
     <div className={styles.leaderboard}>
@@ -22,25 +23,31 @@ export function Leaderboard() {
         <span>회</span>
         <span>점수</span>
       </div>
-      <ol className={styles.list}>
-        {MOCK_LEADERBOARD.map((e) => {
-          const team = getTeam(e.team);
-          return (
-            <li key={`${e.rank}-${e.nickname}`} className={styles.row}>
-              <span className={styles.rank}>{e.rank}</span>
-              <span className={styles.nick}>{e.nickname}</span>
-              <span
-                className={styles.team}
-                style={team ? { background: team.color } : undefined}
-              >
-                {team?.short ?? '-'}
-              </span>
-              <span className={styles.round}>{e.round}회</span>
-              <span className={styles.score}>{e.score.toLocaleString()}</span>
-            </li>
-          );
-        })}
-      </ol>
+      {loading ? (
+        <div style={{ padding: 24, textAlign: 'center', color: 'var(--colors-game-beige)' }}>
+          불러오는 중...
+        </div>
+      ) : (
+        <ol className={styles.list}>
+          {entries.map((e) => {
+            const team = getTeam(e.team);
+            return (
+              <li key={`${e.rank}-${e.nickname}`} className={styles.row}>
+                <span className={styles.rank}>{e.rank}</span>
+                <span className={styles.nick}>{e.nickname}</span>
+                <span
+                  className={styles.team}
+                  style={team ? { background: team.color } : undefined}
+                >
+                  {team?.short ?? '-'}
+                </span>
+                <span className={styles.round}>{e.round}회</span>
+                <span className={styles.score}>{e.score.toLocaleString()}</span>
+              </li>
+            );
+          })}
+        </ol>
+      )}
     </div>
   );
 }
