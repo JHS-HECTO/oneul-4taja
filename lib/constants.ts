@@ -16,8 +16,8 @@ export const STRIKES_TO_GAME_OVER = 3;
 // 단계 (스펙 2.5)
 export const FIXED_ROUND_COUNT = 50; // 1~50 정해진 난이도 곡선, 51+ 평형
 
-// 응모권 마일스톤 (스펙 5.0)
-export const DAILY_TICKET_MILESTONES = [5, 15, 30] as const;
+// 응모권 마일스톤 — 10회마다 1장
+export const DAILY_TICKET_MILESTONES = [10, 20, 30, 40, 50] as const;
 export const TICKETS_PER_MILESTONE = 1;
 
 // 연출 타이밍 (legacy — 새 흐름은 GameScreen.tsx 의 JUDGING_TOTAL_MS 사용)

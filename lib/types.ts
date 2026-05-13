@@ -39,6 +39,12 @@ export type GameUser = {
   team: TeamCode;
 };
 
+// 응모권 보상 팝업 상태
+export type PendingReward = {
+  round: number;   // 도달한 마일스톤 (10, 20, 30, 40, 50)
+  count: number;   // 지급 응모권 수
+};
+
 // 게임 전체 상태
 export type GameState = {
   phase: GamePhase;
@@ -46,15 +52,16 @@ export type GameState = {
   totalScore: number;
   totalHits: number;
   totalHomeruns: number;
-  totalStrikes: number;     // 누적 0..3 (게임 종료 기준)
+  totalStrikes: number;
   maxRoundReached: number;
   lastResult: PitchOutcome | null;
   continuesLeft: number;
   freeSessionsLeft: number;
   adSessionsLeft: number;
-  dailyMilestonesDone: number[]; // [5, 15, 30] 중 도달한 값
+  dailyMilestonesDone: number[];
   lifetime50Done: boolean;
   user: GameUser | null;
+  pendingReward: PendingReward | null;
 };
 
 // 회별 난이도 파라미터

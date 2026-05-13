@@ -8,6 +8,7 @@ import { ContinueModal } from 'components/Result/ContinueModal';
 import { Result } from 'components/Result/Result';
 import { Leaderboard } from 'components/Leaderboard/Leaderboard';
 import { DailyLimit } from 'components/DailyLimit/DailyLimit';
+import { RewardPopup } from 'components/RewardPopup/RewardPopup';
 
 export default function Page() {
   const phase = useGameStore((s) => s.phase);
@@ -40,6 +41,7 @@ export default function Page() {
         {phase === 'result' && <Result />}
         {phase === 'leaderboard' && <Leaderboard />}
         {phase === 'daily_limit' && <DailyLimit />}
+        <RewardPopup />
       </div>
     </main>
   );

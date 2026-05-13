@@ -8,6 +8,7 @@ import {
   DAILY_AD_SESSIONS,
   CONTINUES_PER_SESSION,
   DAILY_TICKET_MILESTONES,
+  TICKETS_PER_MILESTONE,
 } from 'lib/constants';
 
 type Actions = {
@@ -18,6 +19,7 @@ type Actions = {
   endCutscene: () => void;
   startContinue: () => void;
   giveUp: () => void;
+  dismissReward: () => void;
   setUser: (user: GameUser) => void;
   setSessionCounters: (free: number, ad: number) => void;
   showLeaderboard: () => void;
@@ -40,6 +42,7 @@ const INITIAL_STATE: GameState = {
   dailyMilestonesDone: [],
   lifetime50Done: false,
   user: null,
+  pendingReward: null,
 };
 
 export const useGameStore = create<GameState & Actions>((set, get) => ({
@@ -100,13 +103,18 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
       const nextRound = r.round + 1;
       const newMax = Math.max(s.maxRoundReached, r.round);
 
-      // 응모권 마일스톤 체크
+      // 응모권 마일스톤 체크 — 새로 도달한 milestone 중 가장 큰 것에 팝업 표시
       let dailyMilestones = s.dailyMilestonesDone;
+      let newlyReached: number | null = null;
       DAILY_TICKET_MILESTONES.forEach((m) => {
         if (newMax >= m && !dailyMilestones.includes(m)) {
           dailyMilestones = [...dailyMilestones, m];
+          if (newlyReached === null || m > newlyReached) newlyReached = m;
         }
       });
+      const reward = newlyReached !== null
+        ? { round: newlyReached, count: TICKETS_PER_MILESTONE }
+        : null;
 
       // 평생 50회 첫 도달
       const lifetime50JustDone = r.round === 50 && !s.lifetime50Done;
@@ -119,6 +127,7 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
         lifetime50Done: s.lifetime50Done || lifetime50JustDone,
         current: { round: nextRound, pitchIndex: 0, hits: 0, homerunInRound: false },
         phase: showCutscene ? 'cutscene' : 'playing',
+        pendingReward: reward ?? s.pendingReward,
       });
       return;
     }
@@ -154,6 +163,8 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
   },
 
   giveUp: () => set({ phase: 'result' }),
+
+  dismissReward: () => set({ pendingReward: null }),
 
   setUser: (user) => set({ user }),
   setSessionCounters: (free, ad) => set({ freeSessionsLeft: free, adSessionsLeft: ad }),

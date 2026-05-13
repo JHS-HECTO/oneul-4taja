@@ -1,0 +1,120 @@
+// 야구빠따 스타일 응모권 보상 팝업 — 동일 디자인 사용
+// (검정 테두리 + 흰 카드 + 노랑 액센트, Black Han Sans 헤더)
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  animation: fade-in 0.2s ease-out;
+}
+
+.card {
+  width: 280px;
+  padding: 28px 24px 22px;
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 16px;
+  box-shadow: 8px 8px 0 #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.icon {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  animation: spin 1.2s ease-in-out infinite;
+  image-rendering: auto; // 야구빠따 ticket.png는 일반 일러스트
+}
+
+.title {
+  font-family: 'Black Han Sans', 'Pretendard', sans-serif;
+  font-size: 28px;
+  color: #000000;
+  letter-spacing: -1px;
+  line-height: 1;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+.red {
+  color: #ff0000;
+}
+
+.countRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.num {
+  font-family: 'Tahoma', sans-serif;
+  font-size: 56px;
+  font-weight: 900;
+  color: #ff0000;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.unit {
+  font-family: 'Malgun Gothic', 'Pretendard', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #000000;
+  letter-spacing: -0.5px;
+}
+
+.desc {
+  font-family: 'Malgun Gothic', 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: #666666;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-top: 4px;
+}
+
+.confirmBtn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px;
+  background: #000000;
+  color: #ffeb00;
+  border: 3px solid #000000;
+  border-radius: 8px;
+  font-family: 'Malgun Gothic', 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #ffeb00, 0 4px 0 3px #000000;
+  transition: transform 0.08s, box-shadow 0.08s;
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #ffeb00, 0 2px 0 3px #000000;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pop {
+  0%   { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes spin {
+  0%, 100% { transform: rotate(-12deg) scale(1); }
+  50%      { transform: rotate(12deg) scale(1.15); }
+}

@@ -185,31 +185,35 @@ describe('startContinue', () => {
   });
 });
 
-describe('daily ticket milestones', () => {
-  it('reaching round 5 marks milestone 5', () => {
+describe('daily ticket milestones (10/20/30/40/50)', () => {
+  it('reaching round 10 marks milestone 10 and sets pendingReward', () => {
     useGameStore.setState({
       phase: 'judging',
-      current: { round: 5, pitchIndex: 2, hits: 3, homerunInRound: false },
-      maxRoundReached: 4,
+      current: { round: 10, pitchIndex: 2, hits: 3, homerunInRound: false },
+      maxRoundReached: 9,
       dailyMilestonesDone: [],
     });
     useGameStore.getState().proceedAfterJudging();
-    expect(useGameStore.getState().dailyMilestonesDone).toContain(5);
+    const s = useGameStore.getState();
+    expect(s.dailyMilestonesDone).toContain(10);
+    expect(s.pendingReward).toEqual({ round: 10, count: 1 });
   });
 
-  it('does not duplicate milestones', () => {
+  it('does not duplicate milestones or re-trigger reward', () => {
     useGameStore.setState({
       phase: 'judging',
-      current: { round: 7, pitchIndex: 2, hits: 3, homerunInRound: false },
-      maxRoundReached: 6,
-      dailyMilestonesDone: [5],
+      current: { round: 12, pitchIndex: 2, hits: 3, homerunInRound: false },
+      maxRoundReached: 11,
+      dailyMilestonesDone: [10],
+      pendingReward: null,
     });
     useGameStore.getState().proceedAfterJudging();
-    const ms = useGameStore.getState().dailyMilestonesDone;
-    expect(ms.filter((x) => x === 5)).toHaveLength(1);
+    const s = useGameStore.getState();
+    expect(s.dailyMilestonesDone.filter((x) => x === 10)).toHaveLength(1);
+    expect(s.pendingReward).toBeNull();
   });
 
-  it('hitting round 30 marks all three milestones', () => {
+  it('hitting round 30 marks all three milestones (10, 20, 30)', () => {
     useGameStore.setState({
       phase: 'judging',
       current: { round: 30, pitchIndex: 2, hits: 3, homerunInRound: false },
@@ -218,9 +222,15 @@ describe('daily ticket milestones', () => {
     });
     useGameStore.getState().proceedAfterJudging();
     const ms = useGameStore.getState().dailyMilestonesDone;
-    expect(ms).toContain(5);
-    expect(ms).toContain(15);
+    expect(ms).toContain(10);
+    expect(ms).toContain(20);
     expect(ms).toContain(30);
+  });
+
+  it('dismissReward clears pendingReward', () => {
+    useGameStore.setState({ pendingReward: { round: 10, count: 1 } });
+    useGameStore.getState().dismissReward();
+    expect(useGameStore.getState().pendingReward).toBeNull();
   });
 });
 
