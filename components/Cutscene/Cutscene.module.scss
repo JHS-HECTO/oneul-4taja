@@ -35,7 +35,7 @@
   border: 4px solid var(--colors-game-yellow);
   box-shadow: 6px 6px 0 var(--colors-game-red);
   animation: shake 0.4s ease-out;
-  white-space: pre-line;
+  white-space: nowrap; // 기본: 한 줄
 }
 
 // 게임오버 라벨 — 전광판(이미지 중앙) 위에 두 줄로 표시
@@ -53,6 +53,7 @@
   border: none;
   background: transparent;
   box-shadow: none;
+  white-space: pre-line; // GAME\nOVER 두 줄 처리용
 }
 
 // 홈런 라벨 — 크고 임팩트 있게 (바운스 + 회전 진입)
