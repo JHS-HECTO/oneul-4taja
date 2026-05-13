@@ -33,15 +33,15 @@ export function ImpactEffect() {
     );
   }
 
-  // HOMERUN — layered burst + shockwave + sparks + 꽝! text + screen flash
+  // HOMERUN — 3 layered stars + bright core + 8 sparks + screen flash
   return (
     <>
       <div className={styles.screenFlash} aria-hidden />
       <div className={styles.impactWrap} aria-hidden>
-        <div className={styles.shockwave} />
         <div className={styles.hrStarOuter} />
+        <div className={styles.hrStarMid} />
         <div className={styles.hrStarInner} />
-        <div className={styles.hrText}>꽝!</div>
+        <div className={styles.hrCore} />
         {SPARK_DIRECTIONS_HR.map((angle) => (
           <Spark key={angle} angle={angle} className={styles.sparkBig ?? ''} />
         ))}

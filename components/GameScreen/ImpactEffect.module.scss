@@ -1,7 +1,7 @@
 // Impact effect at bat-ball contact point.
 // All animations start at T=1200ms (contact moment in judging phase).
-// 8-bit pixelated burst — sharp clip-path shapes, no smooth gradients.
-// Sized small (max 100-120px) so the ball trajectory remains visible.
+// 8-bit pixelated burst — sharp clip-path shapes, no gradients.
+// Sized small (max ~100px) so the ball trajectory remains visible.
 
 .impactWrap {
   position: absolute;
@@ -14,7 +14,7 @@
 }
 
 // ============================
-// HIT (small, focused)
+// HIT (subtle, focused)
 // ============================
 .hitStar {
   position: absolute;
@@ -44,25 +44,28 @@
 }
 
 // ============================
-// HOMERUN (layered + sparks + text + flash + shake)
+// HOMERUN — layered stars + bright core + sparks + flash
 // ============================
-.shockwave {
+.hrCore {
   position: absolute;
-  width: 60px;
-  height: 60px;
-  margin: -30px 0 0 -30px;
-  border: 5px solid var(--colors-game-yellow);
-  border-radius: 0;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 18px 8px rgba(255, 255, 255, 0.8),
+    0 0 36px 16px rgba(255, 248, 200, 0.5);
   opacity: 0;
-  animation: shockwave 500ms ease-out forwards;
+  animation: hr-core 350ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
 .hrStarOuter {
   position: absolute;
-  width: 96px;
-  height: 96px;
-  margin: -48px 0 0 -48px;
+  width: 110px;
+  height: 110px;
+  margin: -55px 0 0 -55px;
   background: var(--colors-game-yellow);
   clip-path: polygon(
     50% 0%, 62% 38%, 100% 50%, 62% 62%,
@@ -73,11 +76,26 @@
   animation-delay: 1200ms;
 }
 
+.hrStarMid {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  margin: -40px 0 0 -40px;
+  background: var(--colors-game-perfect);
+  clip-path: polygon(
+    50% 0%, 62% 38%, 100% 50%, 62% 62%,
+    50% 100%, 38% 62%, 0% 50%, 38% 38%
+  );
+  opacity: 0;
+  animation: hr-mid 550ms ease-out forwards;
+  animation-delay: 1200ms;
+}
+
 .hrStarInner {
   position: absolute;
-  width: 56px;
-  height: 56px;
-  margin: -28px 0 0 -28px;
+  width: 50px;
+  height: 50px;
+  margin: -25px 0 0 -25px;
   background: var(--colors-game-beige);
   clip-path: polygon(
     50% 0%, 62% 38%, 100% 50%, 62% 62%,
@@ -85,25 +103,6 @@
   );
   opacity: 0;
   animation: hr-inner 500ms ease-out forwards;
-  animation-delay: 1200ms;
-}
-
-.hrText {
-  position: absolute;
-  margin: -36px 0 0 -32px;
-  font-size: 36px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  color: var(--colors-game-red);
-  text-shadow:
-    3px 3px 0 var(--colors-game-yellow),
-    -2px -2px 0 var(--colors-game-yellow),
-    2px -2px 0 var(--colors-game-yellow),
-    -2px 2px 0 var(--colors-game-yellow),
-    0 0 4px var(--colors-game-dark);
-  white-space: nowrap;
-  opacity: 0;
-  animation: hr-text 600ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
@@ -115,7 +114,7 @@
   background: var(--colors-game-yellow);
   border: 2px solid var(--colors-game-dark);
   opacity: 0;
-  animation: spark-big-fly 550ms ease-out forwards;
+  animation: spark-big-fly 600ms ease-out forwards;
   animation-delay: 1200ms;
 }
 
@@ -148,9 +147,11 @@
   100% { transform: rotate(var(--angle)) translateX(56px) scale(0.5); opacity: 0; }
 }
 
-@keyframes shockwave {
-  0%   { transform: rotate(45deg) scale(0.2); opacity: 1; }
-  100% { transform: rotate(45deg) scale(3.5); opacity: 0; }
+@keyframes hr-core {
+  0%   { transform: scale(0.2); opacity: 0; }
+  20%  { transform: scale(1.8); opacity: 1; }
+  60%  { transform: scale(2.5); opacity: 0.5; }
+  100% { transform: scale(3.0); opacity: 0; }
 }
 
 @keyframes hr-outer {
@@ -159,23 +160,22 @@
   100% { transform: scale(2.0) rotate(70deg); opacity: 0; }
 }
 
-@keyframes hr-inner {
-  0%   { transform: scale(0.3) rotate(45deg); opacity: 0; }
-  15%  { transform: scale(1.6) rotate(60deg); opacity: 1; }
-  100% { transform: scale(2.0) rotate(110deg); opacity: 0; }
+@keyframes hr-mid {
+  0%   { transform: scale(0.3) rotate(22deg); opacity: 0; }
+  15%  { transform: scale(1.5) rotate(0deg); opacity: 1; }
+  100% { transform: scale(2.0) rotate(-50deg); opacity: 0; }
 }
 
-@keyframes hr-text {
-  0%   { transform: scale(0.3) rotate(-15deg); opacity: 0; }
-  15%  { transform: scale(1.4) rotate(8deg); opacity: 1; }
-  40%  { transform: scale(1.3) rotate(-4deg); opacity: 1; }
-  100% { transform: scale(1.5) rotate(0deg); opacity: 0; }
+@keyframes hr-inner {
+  0%   { transform: scale(0.4) rotate(45deg); opacity: 0; }
+  15%  { transform: scale(1.6) rotate(60deg); opacity: 1; }
+  100% { transform: scale(2.2) rotate(110deg); opacity: 0; }
 }
 
 @keyframes spark-big-fly {
   0%   { transform: rotate(var(--angle)) translateX(8px) scale(0); opacity: 1; }
   25%  { transform: rotate(var(--angle)) translateX(40px) scale(1); opacity: 1; }
-  100% { transform: rotate(var(--angle)) translateX(90px) scale(0.4); opacity: 0; }
+  100% { transform: rotate(var(--angle)) translateX(100px) scale(0.4); opacity: 0; }
 }
 
 @keyframes screen-flash {
