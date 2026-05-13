@@ -5,8 +5,11 @@ import styles from './RewardPopup.module.scss';
 export function RewardPopup() {
   const pendingReward = useGameStore((s) => s.pendingReward);
   const dismissReward = useGameStore((s) => s.dismissReward);
+  const phase = useGameStore((s) => s.phase);
 
-  if (!pendingReward) return null;
+  // Only show during playing (after any cutscene completes).
+  // Avoids the popup being covered by an active cutscene animation.
+  if (!pendingReward || phase !== 'playing') return null;
 
   return (
     <div className={styles.overlay} onClick={dismissReward} role="dialog" aria-modal="true">
