@@ -52,11 +52,12 @@ export const useGameStore = create<GameState & Actions>((set, get) => ({
     const s = get();
     set({
       ...INITIAL_STATE,
-      // 유저 / 일일 카운터 / 평생 마일스톤은 유지
+      // 유저 / 일일 세션 카운터 / 평생 마일스톤은 유지
+      // (응모권 마일스톤은 game-start마다 초기화 — 부모 통합 시 setSessionCounters
+      //  로 운영 데이터 주입. 단독 dev 환경에선 매 게임마다 다시 받을 수 있게)
       user: s.user,
       freeSessionsLeft: s.freeSessionsLeft,
       adSessionsLeft: s.adSessionsLeft,
-      dailyMilestonesDone: s.dailyMilestonesDone,
       lifetime50Done: s.lifetime50Done,
       phase: 'intro',
     });
