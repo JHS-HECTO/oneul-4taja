@@ -1,5 +1,6 @@
 'use client';
 import { useEffect } from 'react';
+import clsx from 'clsx';
 import { useGameStore } from 'lib/store/gameStore';
 import styles from './GameScreen.module.scss';
 import { Hud } from './Hud';
@@ -8,19 +9,13 @@ import { PitcherSprite } from './PitcherSprite';
 import { Ball } from './Ball';
 import { Gauge } from './Gauge';
 import { EffectText } from './EffectText';
+import { ImpactEffect } from './ImpactEffect';
 
-// New flow timing (relative to phase=judging start):
-// T=0     gauge stops, judging starts
-// T=0-700 pitcher winds up (6 frames)
-// T=700   pitcher releases ball
-// T=700-1200 ball flies
-// T=720-1440 batter swing (12 frames)
-// T=1200  contact moment, effect text shows
-// T=2000  proceed to next phase
 const JUDGING_TOTAL_MS = 2000;
 
 export function GameScreen() {
   const phase = useGameStore((s) => s.phase);
+  const lastResult = useGameStore((s) => s.lastResult);
   const proceedAfterJudging = useGameStore((s) => s.proceedAfterJudging);
 
   useEffect(() => {
@@ -29,13 +24,20 @@ export function GameScreen() {
     return () => clearTimeout(t);
   }, [phase, proceedAfterJudging]);
 
+  // Homerun adds screen-shake on the whole screen container
+  const screenClass = clsx(
+    styles.screen,
+    phase === 'judging' && lastResult === 'homerun' && styles.homerunShake
+  );
+
   return (
-    <div className={styles.screen}>
+    <div className={screenClass}>
       <div className={styles.background} aria-hidden />
       <Hud />
       <PitcherSprite />
       <Ball />
       <BatterSprite />
+      <ImpactEffect />
       <Gauge />
       <EffectText />
     </div>

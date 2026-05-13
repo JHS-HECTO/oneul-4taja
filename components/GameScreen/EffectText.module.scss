@@ -21,7 +21,18 @@
     1px 1px 0 var(--colors-game-dark);
 }
 
-.homerun { color: var(--colors-game-perfect); }
+.homerun {
+  color: var(--colors-game-perfect);
+  font-size: 44px;
+  letter-spacing: 5px;
+  text-shadow:
+    6px 6px 0 var(--colors-game-red),
+    4px 4px 0 var(--colors-game-dark),
+    -1px -1px 0 var(--colors-game-dark),
+    1px -1px 0 var(--colors-game-dark),
+    -1px 1px 0 var(--colors-game-dark),
+    1px 1px 0 var(--colors-game-dark);
+}
 .hit { color: var(--colors-game-hit); }
 .strike {
   color: var(--colors-game-miss);
