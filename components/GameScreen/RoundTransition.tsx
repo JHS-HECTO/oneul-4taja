@@ -26,15 +26,16 @@ export function RoundTransition() {
 
   if (displayRound === null) return null;
 
+  // Wrap in a keyed Fragment so EVERY round gets fresh elements,
+  // guaranteeing animations restart from frame 0 even on fast back-to-back
+  // transitions (previous version had stale animation state on .overlay).
   return (
-    <>
-      {/* 어두운 오버레이 (회차마다 딤 처리) */}
+    <div key={displayRound}>
       <div className={styles.overlay} aria-hidden />
-      {/* 배너 + 서브 라벨 */}
       <div className={styles.banner} aria-hidden>
         <div className={styles.subLabel}>NEXT INNING</div>
-        <div className={styles.text} key={displayRound}>{displayRound}회</div>
+        <div className={styles.text}>{displayRound}회</div>
       </div>
-    </>
+    </div>
   );
 }
