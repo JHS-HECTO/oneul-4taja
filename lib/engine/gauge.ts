@@ -1,17 +1,38 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import type { GaugeFrame } from 'lib/types';
+import type { GaugeFrame, GaugeEasing } from 'lib/types';
 
 /**
  * 시간(ms) 기반 게이지 위치 계산. 좌→우→좌 = 1 사이클 = gaugeSpeedMs × 2.
- * 위치는 0..1 사이의 삼각파.
+ *
+ * easing 'linear': 삼각파(균일 속도)
+ * easing 'easeInOut': 가장자리에서 천천히, 중앙에서 빠르게 (cubic ease-in-out)
+ *   — 좌·우 끝에서 잠깐 멈추는 듯, 가운데를 휙 통과하는 느낌
  */
-export function computeGaugePosition(elapsedMs: number, gaugeSpeedMs: number): GaugeFrame {
+export function computeGaugePosition(
+  elapsedMs: number,
+  gaugeSpeedMs: number,
+  easing: GaugeEasing = 'linear'
+): GaugeFrame {
   const cycleMs = gaugeSpeedMs * 2;
-  const t = (elapsedMs % cycleMs) / cycleMs; // 0..1
+  const t = (elapsedMs % cycleMs) / cycleMs; // 0..1 within full cycle
+
+  if (easing === 'linear') {
+    if (t < 0.5) {
+      return { position: t * 2, direction: 1 };
+    } else {
+      return { position: 2 - t * 2, direction: -1 };
+    }
+  }
+
+  // easeInOut: cubic ease-in-out on each half (sweep)
   if (t < 0.5) {
-    return { position: t * 2, direction: 1 };
+    const u = t * 2; // 0..1 left-to-right
+    const eased = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    return { position: eased, direction: 1 };
   } else {
-    return { position: 2 - t * 2, direction: -1 };
+    const u = (t - 0.5) * 2; // 0..1 right-to-left
+    const eased = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    return { position: 1 - eased, direction: -1 };
   }
 }
 
@@ -19,16 +40,15 @@ const CENTER_FRAME: GaugeFrame = { position: 0.5, direction: 1 };
 
 /**
  * useGauge — running=true 동안 매 프레임 위치 업데이트.
- * 누르기 시작할 때 phase 보정으로 첫 프레임이 위치 0.5(중앙)부터 출발 → "프리뷰 중앙"에서
- * 자연스럽게 시작. 정지(stop) 후 프레임은 정지 위치 그대로 유지 (시각=판정 일치).
- * reset()으로 다음 투구 시작 시 중앙(0.5) 프리뷰 상태로 복원.
+ * easing 파라미터에 따라 균일/완급 진동 선택.
  */
 export function useGauge(opts: {
   gaugeSpeedMs: number;
+  easing?: GaugeEasing;
   running: boolean;
   onStop?: (position: number) => void;
 }) {
-  const { gaugeSpeedMs, running, onStop } = opts;
+  const { gaugeSpeedMs, easing = 'linear', running, onStop } = opts;
   const [frame, setFrame] = useState<GaugeFrame>(CENTER_FRAME);
   const startedAtRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -36,11 +56,11 @@ export function useGauge(opts: {
 
   useEffect(() => {
     if (!running) return;
-    // Phase shift so first frame at position 0.5 going right (smooth start from preview)
+    // Phase shift so first frame at position 0.5 going right (smooth from preview)
     startedAtRef.current = performance.now() - gaugeSpeedMs / 2;
     const tick = (now: number) => {
       const elapsed = now - (startedAtRef.current ?? now);
-      const f = computeGaugePosition(elapsed, gaugeSpeedMs);
+      const f = computeGaugePosition(elapsed, gaugeSpeedMs, easing);
       frameRef.current = f;
       setFrame(f);
       rafRef.current = requestAnimationFrame(tick);
@@ -49,14 +69,13 @@ export function useGauge(opts: {
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [running, gaugeSpeedMs]);
+  }, [running, gaugeSpeedMs, easing]);
 
   const stop = useCallback(() => {
     if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
-    // Don't reset frame state — keep it at the captured position so visual stays put
     if (onStop) onStop(frameRef.current.position);
   }, [onStop]);
 

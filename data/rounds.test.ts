@@ -8,16 +8,30 @@ describe('rounds difficulty curve', () => {
 
   it('round 1 is the easiest', () => {
     const r1 = getDifficulty(1);
-    expect(r1.gaugeSpeedMs).toBe(1400);
+    expect(r1.gaugeSpeedMs).toBe(900);
     expect(r1.perfectZoneRatio).toBe(0.05);
     expect(r1.goodZoneRatio).toBe(0.08);
+    expect(r1.easing).toBe('linear');
   });
 
   it('round 50 is the hardest', () => {
     const r50 = getDifficulty(50);
-    expect(r50.gaugeSpeedMs).toBe(400);
+    expect(r50.gaugeSpeedMs).toBe(250);
     expect(r50.perfectZoneRatio).toBeCloseTo(0.01, 5);
     expect(r50.goodZoneRatio).toBeCloseTo(0.02, 5);
+    expect(r50.easing).toBe('easeInOut');
+  });
+
+  it('rounds 1-10 use linear easing', () => {
+    for (let r = 1; r <= 10; r++) {
+      expect(getDifficulty(r).easing).toBe('linear');
+    }
+  });
+
+  it('rounds 11+ use easeInOut (pause-and-rush feel)', () => {
+    for (let r = 11; r <= 50; r++) {
+      expect(getDifficulty(r).easing).toBe('easeInOut');
+    }
   });
 
   it('round 51+ plateaus at round 50', () => {

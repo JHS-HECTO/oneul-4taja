@@ -28,6 +28,7 @@ export function Gauge() {
 
   const { frame, stop, reset } = useGauge({
     gaugeSpeedMs: diff.gaugeSpeedMs,
+    easing: diff.easing,
     running,
     onStop: handleStop,
   });

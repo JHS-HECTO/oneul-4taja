@@ -6,11 +6,13 @@ import type { RoundDifficulty } from 'lib/types';
 
 const TABLE: RoundDifficulty[] = [];
 for (let round = 1; round <= 50; round++) {
-  const gaugeSpeedMs = 1400 - ((1400 - 400) * (round - 1)) / 49;
+  // 속도 ↑: 1회=900ms → 50회=250ms (이전 1400→400보다 35% 빠름)
+  const gaugeSpeedMs = 900 - ((900 - 250) * (round - 1)) / 49;
   const perfectZoneRatio = 0.05 - ((0.05 - 0.01) * (round - 1)) / 49;
-  // 안타 영역도 처음부터 더 좁게 (1회=8%/side → 50회=2%/side)
   const goodZoneRatio = 0.08 - ((0.08 - 0.02) * (round - 1)) / 49;
-  TABLE.push({ round, gaugeSpeedMs, perfectZoneRatio, goodZoneRatio });
+  // 11회부터 cubic ease-in-out — 가장자리에서 멈춤, 중앙에서 휙 지나감
+  const easing = round >= 11 ? 'easeInOut' : 'linear';
+  TABLE.push({ round, gaugeSpeedMs, perfectZoneRatio, goodZoneRatio, easing });
 }
 
 export const ROUND_DIFFICULTY: ReadonlyArray<RoundDifficulty> = TABLE;

@@ -65,11 +65,14 @@ export type GameState = {
 };
 
 // 회별 난이도 파라미터 — 단일 게이지, 홈런 가운데 + 안타 양옆
+export type GaugeEasing = 'linear' | 'easeInOut';
+
 export type RoundDifficulty = {
   round: number;
   gaugeSpeedMs: number;     // 게이지 좌→우 1바퀴 시간 (낮을수록 빠름)
   perfectZoneRatio: number; // 홈런존 가로 폭 (0~1)
   goodZoneRatio: number;    // 홈런존 한쪽 옆 안타존 폭 (0~1, per-side)
+  easing: GaugeEasing;      // 'linear' = 균일 속도, 'easeInOut' = 가장자리 멈춤+중앙 휙
 };
 
 // 게이지 1프레임 상태

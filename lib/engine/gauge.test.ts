@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { computeGaugePosition } from './gauge';
 
-describe('computeGaugePosition', () => {
+describe('computeGaugePosition (linear)', () => {
   it('elapsed=0 → position 0, direction 1', () => {
     const f = computeGaugePosition(0, 1000);
     expect(f.position).toBe(0);
@@ -34,6 +34,38 @@ describe('computeGaugePosition', () => {
   it('position stays in [0, 1] for arbitrary elapsed times', () => {
     for (let t = 0; t < 10000; t += 73) {
       const f = computeGaugePosition(t, 1000);
+      expect(f.position).toBeGreaterThanOrEqual(0);
+      expect(f.position).toBeLessThanOrEqual(1);
+    }
+  });
+});
+
+describe('computeGaugePosition (easeInOut)', () => {
+  it('elapsed=0 → position 0', () => {
+    const f = computeGaugePosition(0, 1000, 'easeInOut');
+    expect(f.position).toBe(0);
+    expect(f.direction).toBe(1);
+  });
+
+  it('elapsed=mid-sweep is slower than linear at start (slow edges)', () => {
+    // At t=0.1 of cycle (elapsed=200ms with speed=1000ms cycle=2000ms),
+    // linear gives 0.2, easeInOut gives much less.
+    const linear = computeGaugePosition(200, 1000);
+    const eased = computeGaugePosition(200, 1000, 'easeInOut');
+    expect(eased.position).toBeLessThan(linear.position);
+  });
+
+  it('elapsed=quarter-cycle (center of left-to-right sweep) → position 0.5', () => {
+    // Quarter cycle = elapsed 500ms with speed 1000ms (cycle 2000ms).
+    // At u=0.5 (center of half cycle), ease-in-out should hit 0.5.
+    const f = computeGaugePosition(500, 1000, 'easeInOut');
+    expect(f.position).toBeCloseTo(0.5, 2);
+    expect(f.direction).toBe(1);
+  });
+
+  it('position stays in [0, 1] for arbitrary elapsed times', () => {
+    for (let t = 0; t < 10000; t += 73) {
+      const f = computeGaugePosition(t, 1000, 'easeInOut');
       expect(f.position).toBeGreaterThanOrEqual(0);
       expect(f.position).toBeLessThanOrEqual(1);
     }

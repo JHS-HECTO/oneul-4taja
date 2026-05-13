@@ -8,6 +8,7 @@ const easy: RoundDifficulty = {
   gaugeSpeedMs: 1400,
   perfectZoneRatio: 0.05,  // homerun: 0.475..0.525
   goodZoneRatio: 0.12,     // hit: 0.355..0.475, 0.525..0.645
+  easing: 'linear',
 };
 
 const hard: RoundDifficulty = {
@@ -15,6 +16,7 @@ const hard: RoundDifficulty = {
   gaugeSpeedMs: 400,
   perfectZoneRatio: 0.01,  // homerun: 0.495..0.505
   goodZoneRatio: 0.04,     // hit: 0.455..0.495, 0.505..0.545
+  easing: 'easeInOut',
 };
 
 describe('detectHit (easy round)', () => {
