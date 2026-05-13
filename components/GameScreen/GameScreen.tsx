@@ -10,6 +10,7 @@ import { Ball } from './Ball';
 import { Gauge } from './Gauge';
 import { EffectText } from './EffectText';
 import { ImpactEffect } from './ImpactEffect';
+import { RoundTransition } from './RoundTransition';
 
 const JUDGING_TOTAL_MS = 2000;
 
@@ -40,6 +41,7 @@ export function GameScreen() {
       <ImpactEffect />
       <Gauge />
       <EffectText />
+      <RoundTransition />
     </div>
   );
 }

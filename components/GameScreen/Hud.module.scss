@@ -1,26 +1,62 @@
+// 전광판 스타일 HUD — 양쪽 코너에 스코어보드 패널
 .hud {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 14px;
+  left: 14px;
+  right: 14px;
   z-index: 30;
-  padding: 14px 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  gap: 12px;
+}
+
+.panel {
+  background: var(--colors-game-navy);
+  border: 3px solid var(--colors-game-yellow);
+  padding: 6px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  color: var(--colors-game-beige);
-  text-shadow: 2px 2px 0 var(--colors-game-dark), -1px -1px 0 var(--colors-game-dark);
-  font-size: 12px;
-  letter-spacing: 2px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 70%, transparent 100%);
-  pointer-events: none;
+  gap: 4px;
+  box-shadow: 3px 3px 0 var(--colors-game-dark);
+  min-width: 80px;
 }
 
 .row {
   display: flex;
+  align-items: baseline;
+  gap: 6px;
   justify-content: space-between;
-  align-items: center;
 }
 
-.round { color: var(--colors-game-beige); font-size: 16px; }
-.score { color: var(--colors-game-yellow); font-size: 16px; }
-.hits { color: var(--colors-game-hit); }
-.strikes { color: var(--colors-game-miss); }
+.label {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--colors-game-beige);
+  text-shadow: 1px 1px 0 var(--colors-game-dark);
+}
+
+.value {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--colors-game-yellow);
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 var(--colors-game-dark);
+}
+
+.roundVal {
+  font-size: 22px;
+}
+
+.scoreVal {
+  font-size: 14px;
+}
+
+.hitVal {
+  color: var(--colors-game-hit);
+}
+
+.strikeVal {
+  color: var(--colors-game-miss);
+}

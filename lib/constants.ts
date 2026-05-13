@@ -11,7 +11,7 @@ export const CONTINUES_PER_SESSION = 2; // 1트라이 + 광고 이어하기 2회
 // 회 정책 (스펙 2.3)
 export const MAX_PITCHES_PER_ROUND = 5;
 export const HITS_TO_CLEAR_ROUND = 3;
-export const STRIKES_TO_GAME_OVER = 3;
+export const STRIKES_TO_GAME_OVER = 1; // 1 스트라이크 = 게임오버 (one-shot mode)
 
 // 단계 (스펙 2.5)
 export const FIXED_ROUND_COUNT = 50; // 1~50 정해진 난이도 곡선, 51+ 평형

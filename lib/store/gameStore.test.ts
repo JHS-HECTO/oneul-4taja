@@ -120,11 +120,11 @@ describe('proceedAfterJudging — round clear', () => {
   });
 });
 
-describe('proceedAfterJudging — game over', () => {
-  it('3 strikes → cutscene (game over)', () => {
+describe('proceedAfterJudging — game over (1 strike)', () => {
+  it('1 strike → cutscene (game over, one-shot mode)', () => {
     useGameStore.setState({
       phase: 'judging',
-      totalStrikes: 3,
+      totalStrikes: 1,
     });
     useGameStore.getState().proceedAfterJudging();
     expect(useGameStore.getState().phase).toBe('cutscene');
@@ -136,7 +136,7 @@ describe('proceedAfterJudging — next pitch', () => {
     useGameStore.setState({
       phase: 'judging',
       current: { round: 2, pitchIndex: 1, hits: 1, homerunInRound: false },
-      totalStrikes: 1,
+      totalStrikes: 0, // 1-strike mode: 0 strikes = still alive
     });
     useGameStore.getState().proceedAfterJudging();
     const s = useGameStore.getState();
@@ -148,19 +148,19 @@ describe('proceedAfterJudging — next pitch', () => {
 
 describe('endCutscene', () => {
   it('after game over → continue_prompt (if continues left)', () => {
-    useGameStore.setState({ phase: 'cutscene', totalStrikes: 3, continuesLeft: 1 });
+    useGameStore.setState({ phase: 'cutscene', totalStrikes: 1, continuesLeft: 1 });
     useGameStore.getState().endCutscene();
     expect(useGameStore.getState().phase).toBe('continue_prompt');
   });
 
   it('after game over with 0 continues → result', () => {
-    useGameStore.setState({ phase: 'cutscene', totalStrikes: 3, continuesLeft: 0 });
+    useGameStore.setState({ phase: 'cutscene', totalStrikes: 1, continuesLeft: 0 });
     useGameStore.getState().endCutscene();
     expect(useGameStore.getState().phase).toBe('result');
   });
 
-  it('after homerun cutscene → playing', () => {
-    useGameStore.setState({ phase: 'cutscene', totalStrikes: 1 });
+  it('after homerun cutscene (not game over) → playing', () => {
+    useGameStore.setState({ phase: 'cutscene', totalStrikes: 0 });
     useGameStore.getState().endCutscene();
     expect(useGameStore.getState().phase).toBe('playing');
   });
@@ -170,7 +170,7 @@ describe('startContinue', () => {
   it('resets strikes + round hits, decrements continuesLeft', () => {
     useGameStore.setState({
       phase: 'continue_prompt',
-      totalStrikes: 3,
+      totalStrikes: 1,
       continuesLeft: 2,
       current: { round: 8, pitchIndex: 4, hits: 2, homerunInRound: false },
     });

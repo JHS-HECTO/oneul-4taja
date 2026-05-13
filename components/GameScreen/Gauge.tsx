@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useState } from 'react';
+import clsx from 'clsx';
 import styles from './Gauge.module.scss';
 import { useGameStore } from 'lib/store/gameStore';
 import { useGauge } from 'lib/engine/gauge';
@@ -11,77 +12,74 @@ export function Gauge() {
   const round = useGameStore((s) => s.current.round);
   const recordPitchResult = useGameStore((s) => s.recordPitchResult);
 
-  const [isPressing, setIsPressing] = useState(false);
-
+  const [running, setRunning] = useState(false);
   const diff = getDifficulty(round);
 
-  const handleRelease = useCallback(
+  const handleStop = useCallback(
     (position: number) => {
       const result = detectHit(position, diff);
       recordPitchResult(result);
+      setRunning(false);
     },
     [diff, recordPitchResult]
   );
 
-  // Gauge runs only while pressing AND in playing phase
-  const running = isPressing && phase === 'playing';
-
   const { frame, stop } = useGauge({
     gaugeSpeedMs: diff.gaugeSpeedMs,
-    running,
-    onStop: handleRelease,
+    running: running && phase === 'playing',
+    onStop: handleStop,
   });
 
-  const handlePressStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      if (phase !== 'playing') return;
-      setIsPressing(true);
-    },
-    [phase]
-  );
-
-  const handlePressEnd = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      if (!isPressing) return;
-      setIsPressing(false);
+  const handleTap = useCallback(() => {
+    if (phase !== 'playing') return;
+    if (running) {
       stop();
-    },
-    [isPressing, stop]
-  );
+    } else {
+      setRunning(true);
+    }
+  }, [phase, running, stop]);
 
   if (phase !== 'playing' && phase !== 'judging') return null;
 
   const perfectWidthPct = diff.perfectZoneRatio * 100;
-  const perfectStartPct = 50 - perfectWidthPct / 2;
   const goodWidthPct = diff.goodZoneRatio * 100;
-  const goodLeftStartPct = perfectStartPct - goodWidthPct;
-  const goodRightStartPct = perfectStartPct + perfectWidthPct;
+
+  // Zones move with `frame.position`. Cursor stays static at 50%.
+  // When position = 0.5, perfect zone centered under cursor → homerun.
+  // When idle (not running), zones held at 0.5 (centered preview).
+  const center = running ? frame.position * 100 : 50;
+  const perfectLeft = center - perfectWidthPct / 2;
+  const goodLeftStart = perfectLeft - goodWidthPct;
+  const goodRightStart = perfectLeft + perfectWidthPct;
+
+  const buttonLabel = phase === 'judging'
+    ? '…'
+    : running
+      ? '지금 멈춰!'
+      : '눌러서 시작하기';
 
   return (
     <div className={styles.gaugeWrap}>
+      <div className={styles.gaugeArea}>
+        <div className={styles.gauge}>
+          {/* Moving zones */}
+          <div className={styles.good} style={{ left: `${goodLeftStart}%`, width: `${goodWidthPct}%` }} />
+          <div className={styles.perfect} style={{ left: `${perfectLeft}%`, width: `${perfectWidthPct}%` }} />
+          <div className={styles.good} style={{ left: `${goodRightStart}%`, width: `${goodWidthPct}%` }} />
+          {/* Static center cursor */}
+          <div className={styles.cursor} />
+          <div className={styles.cursorArrow} aria-hidden />
+        </div>
+      </div>
+
       <button
         type="button"
-        className={styles.tapZone}
-        onMouseDown={handlePressStart}
-        onMouseUp={handlePressEnd}
-        onMouseLeave={handlePressEnd}
-        onTouchStart={handlePressStart}
-        onTouchEnd={handlePressEnd}
-        onTouchCancel={handlePressEnd}
+        className={clsx(styles.actionButton, running && styles.actionButtonRunning)}
+        onClick={handleTap}
         disabled={phase !== 'playing'}
-        aria-label="누르고 있다가 떼서 스윙"
+        aria-label={buttonLabel}
       >
-        <div className={styles.gauge}>
-          <div className={styles.good} style={{ left: `${goodLeftStartPct}%`, width: `${goodWidthPct}%` }} />
-          <div className={styles.perfect} style={{ left: `${perfectStartPct}%`, width: `${perfectWidthPct}%` }} />
-          <div className={styles.good} style={{ left: `${goodRightStartPct}%`, width: `${goodWidthPct}%` }} />
-          <div className={styles.indicator} style={{ left: `${frame.position * 100}%` }} />
-        </div>
-        <div className={styles.tapLabel}>
-          {phase === 'judging' ? '   ' : isPressing ? '▼ 손 떼면 스윙! ▼' : '▼ 누르고 있어! ▼'}
-        </div>
+        {buttonLabel}
       </button>
     </div>
   );
